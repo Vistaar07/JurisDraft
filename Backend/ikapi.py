@@ -31,7 +31,7 @@ class IKApi:
         self.maxpages   = args.maxpages
         self.pathbysrc  = args.pathbysrc
         self.queue      = multiprocessing.Queue(20)
-        self.num_workers= args.numworkers
+        self.num_workers= args.numworkers 
         self.addedtoday = args.addedtoday
         self.fromdate   = args.fromdate
         self.todate     = args.todate
@@ -44,12 +44,21 @@ class IKApi:
         connection = http.client.HTTPSConnection(self.basehost)
         connection.request('POST', url, headers = self.headers)
         response = connection.getresponse()
+
+        # --- START OF MODIFICATION ---
+        if response.status == 403:
+            # 403 Forbidden is a hard stop for an invalid key or rate limit
+            self.logger.error(f"API Key Failed (403 Forbidden) for URL: {url}")
+            # This exception will be caught and will crash the worker process
+            raise Exception("API Key Failed (403 Forbidden)")
+        # --- END OF MODIFICATION ---
+
         results = response.read()
 
         if isinstance(results, bytes):
             results = results.decode('utf8')
         return results
-
+   
     def call_api(self, url):
         count = 0
 
@@ -68,7 +77,7 @@ class IKApi:
                 count += 1
                 time.sleep(count * 100)
             else:
-                break
+                break 
 
         return results
 
@@ -126,9 +135,9 @@ class IKApi:
 
         jsonpath = self.storage.get_json_path('%d q: %s' % (docid, q))
         success = self.storage.save_json(jsonstr, jsonpath)
-        return success
+        return success    
 
-    def download_doc(self, docid, docpath):
+    def download_doc(self, docid, docpath):    
         success = False
         orig_needed = self.orig
         jsonpath, origpath = self.storage.get_json_orig_path(docpath, docid)
@@ -146,8 +155,8 @@ class IKApi:
                 self.logger.error('Error in getting doc %s', docid)
                 return success
 
-            self.logger.info('Saved %s', d['title'])
-            self.storage.save_json(jsonstr, jsonpath)
+            # Use .get() to safely access the title, providing a default if it's missing
+            self.logger.info('Saved %s', d.get('title', f'Document ID {docid} (No Title)'));            self.storage.save_json(jsonstr, jsonpath)
             success = True
 
             if orig_needed:
@@ -158,7 +167,7 @@ class IKApi:
             orig = self.fetch_orig_doc(docid)
             if orig and self.storage.save_original(orig, origpath):
                 self.logger.info('Saved original %s', docid)
-        return success
+        return success        
 
     def make_query(self, q):
         if self.fromdate:
@@ -184,7 +193,7 @@ class IKApi:
         while 1:
             results = self.search(q, pagenum, self.maxpages)
             obj = json.loads(results)
-
+ 
             if 'docs' not in obj or len(obj['docs']) <= 0:
                 break
             docs = obj['docs']
@@ -194,7 +203,7 @@ class IKApi:
                 if self.download_doc(doc['tid'], docpath):
                     docids.append(doc['tid'])
 
-            pagenum += self.maxpages
+            pagenum += self.maxpages 
 
         return docids
 
@@ -230,13 +239,13 @@ class IKApi:
 
                 if self.pathbysrc:
                     docpath = self.storage.get_docpath(doc['docsource'], doc['publishdate'])
-                else:
+                else:    
                     docpath = self.storage.get_docpath_by_position(datadir, current)
                 if self.download_doc(docid, docpath):
                     docids.append(docid)
                 current += 1
 
-            pagenum += self.maxpages
+            pagenum += self.maxpages 
         return docids
 
     def worker(self):
@@ -259,7 +268,7 @@ class IKApi:
             process =  multiprocessing.Process(target = self.worker)
             process.start()
             workers.append(process)
-
+      
         for q in queries:
             q = self.make_query(q)
             self.queue.put(q)
@@ -313,7 +322,7 @@ class FileStorage:
     def get_file_extension(self, mtype):
         t = 'unkwn'
         if not mtype:
-            pass
+            pass 
         elif re.match('text/html', mtype):
             t = 'html'
         elif re.match('application/postscript', mtype):
@@ -324,7 +333,7 @@ class FileStorage:
             t = 'txt'
         elif re.match('image/png', mtype):
             t = 'png'
-        return t
+        return t 
 
     def save_original(self, orig, origpath):
         obj = json.loads(orig)
@@ -375,35 +384,35 @@ class FileStorage:
 
 def get_arg_parser():
     parser = argparse.ArgumentParser(description='For downloading from the api.indiankanoon.org endpoint', add_help=True)
-    parser.add_argument('-l', '--loglevel', dest='loglevel', action='store', \
+    parser.add_argument('-l', '--loglevel', dest='loglevel', action='store',\
                         required = False, default = 'info', \
                         help='log level(error|warning|info|debug)')
 
-    parser.add_argument('-g', '--logfile', dest='logfile', action='store', \
+    parser.add_argument('-g', '--logfile', dest='logfile', action='store',\
                         required = False, default = None, help='log file')
-
-    parser.add_argument('-c', '--doctype', dest='doctype', action='store', \
+   
+    parser.add_argument('-c', '--doctype', dest='doctype', action='store',\
                         required= False, help='doctype')
-    parser.add_argument('-f', '--fromdate', dest='fromdate', action='store', \
+    parser.add_argument('-f', '--fromdate', dest='fromdate', action='store',\
                         required= False, help='from date in DD-MM-YYYY format')
-    parser.add_argument('-t', '--todate', dest='todate', action='store', \
+    parser.add_argument('-t', '--todate', dest='todate', action='store',\
                         required= False, help='to date in DD-MM-YYYY format')
-    parser.add_argument('-S', '--sortby', dest='sortby', action='store', \
+    parser.add_argument('-S', '--sortby', dest='sortby', action='store',\
                         required= False, help='sort results by (mostrecent|leastrecent)')
 
-    parser.add_argument('-D', '--datadir', dest='datadir', action='store', \
+    parser.add_argument('-D', '--datadir', dest='datadir', action='store',\
                         required= True,help='directory to store files')
-    parser.add_argument('-s', '--sharedtoken', dest='token', action='store', \
+    parser.add_argument('-s', '--sharedtoken', dest='token', action='store',\
                         required= True,help='api.ik shared token')
 
-    parser.add_argument('-q', '--query', dest='q', action='store', \
+    parser.add_argument('-q', '--query', dest='q', action='store',\
                         required = False, help='ik query')
-    parser.add_argument('-Q', '--qfile', dest='qfile', action='store', \
+    parser.add_argument('-Q', '--qfile', dest='qfile', action='store',\
                         required = False, help='queries in a file')
     parser.add_argument('-d', '--docid', type = int, dest='docid', \
                         action='store', required = False, help='ik docid')
 
-    parser.add_argument('-o', '--original', dest='orig', action='store_true', \
+    parser.add_argument('-o', '--original', dest='orig', action='store_true',\
                         required = False,   help='ik original')
 
     parser.add_argument('-m', '--maxcites', type = int, dest='maxcites', \
@@ -419,7 +428,7 @@ def get_arg_parser():
                         action='store_true', required = False, \
                         help='save docs by src')
     parser.add_argument('-a', '--addedtoday', dest='addedtoday', \
-                        action='store_true', required = False, default = False, \
+                        action='store_true', required = False, default = False,\
                         help='Search only for documents that were added today')
     parser.add_argument('-N', '--workers', type = int, dest='numworkers', \
                         action='store', default = 5, required = False, \
@@ -430,19 +439,19 @@ logformat   = '%(asctime)s: %(name)s: %(levelname)s %(message)s'
 dateformat  = '%Y-%m-%d %H:%M:%S'
 
 def initialize_file_logging(loglevel, filepath):
-    logging.basicConfig( \
-        level    = loglevel, \
-        format   = logformat, \
+    logging.basicConfig(\
+        level    = loglevel,   \
+        format   = logformat,  \
         datefmt  = dateformat, \
         stream   = filepath
     )
 
 def initialize_stream_logging(loglevel = logging.INFO):
-    logging.basicConfig( \
-        level    = loglevel, \
+    logging.basicConfig(\
+        level    = loglevel,  \
         format   = logformat, \
         datefmt  = dateformat \
-        )
+    )
 
 def setup_logging(level, filename = None):
     leveldict = {'critical': logging.CRITICAL, 'error': logging.ERROR, \
@@ -465,7 +474,7 @@ if __name__ == '__main__':
 
     logger = logging.getLogger('ikapi')
 
-    filestorage = FileStorage(args.datadir)
+    filestorage = FileStorage(args.datadir) 
     ikapi       = IKApi(args, filestorage)
 
     has_more = True

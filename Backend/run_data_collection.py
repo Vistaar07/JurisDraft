@@ -1,14 +1,16 @@
 import os
 import subprocess
 import sys
+import json
 
 # --- Configuration ---
-API_TOKEN = "b7eabe08fb3e7e21fb666dca1d3ff378dc5f991b"
+API_KEY_FILE = "api_keys.json"
 OUTPUT_DIR = "CaseLawData"
-QUERY_FILE = "queries.txt"
-PAGES_PER_QUERY = 20  # WARNING: Set this to a low number (e.g., 2) for testing to manage costs.
+QUERY_FILE_MASTER = "queries.txt" # The file with ALL queries
+PAGES_PER_QUERY = 20  # Set this to your new, higher target (e.g., 20 or 30)
 
 # A comprehensive dictionary of all queries organized by category
+# This will be used to create 'queries.txt' if it doesn't exist
 QUERIES_BY_CATEGORY = {
     "Employment_and_HR": {
         "Offer_Letter": [
@@ -85,52 +87,103 @@ QUERIES_BY_CATEGORY = {
     }
 }
 
-def run_collection():
-    """
-    Writes queries to a file and executes the ikapi.py script to download data.
-    """
-    print("--- Starting Data Collection Process ---")
+def load_api_keys():
+    """Loads a list of API keys from the JSON file."""
+    try:
+        with open(API_KEY_FILE, 'r') as f:
+            data = json.load(f)
+            keys = data.get("api_keys", [])
+            if not keys:
+                print(f"Error: No keys found in {API_KEY_FILE}.")
+                return None
+            return keys
+    except FileNotFoundError:
+        print(f"Error: {API_KEY_FILE} not found. Please create it with your keys.")
+        return None
+    except json.JSONDecodeError:
+        print(f"Error: {API_KEY_FILE} is not a valid JSON file.")
+        return None
 
-    # 1. Flatten all queries from the dictionary into a single list
+def write_master_query_file():
+    """Creates queries.txt from the dictionary if it doesn't exist."""
+    if os.path.exists(QUERY_FILE_MASTER):
+        print(f"'{QUERY_FILE_MASTER}' already exists. Using it.")
+        return
+
+    print(f"'{QUERY_FILE_MASTER}' not found. Generating from script...")
     all_queries = []
     for category, subcategories in QUERIES_BY_CATEGORY.items():
         for subcategory, queries in subcategories.items():
             all_queries.extend(queries)
 
-    # 2. Write all queries to the input file
     try:
-        with open(QUERY_FILE, 'w', encoding='utf-8') as f:
+        with open(QUERY_FILE_MASTER, 'w', encoding='utf-8') as f:
             for query in all_queries:
                 f.write(f"{query}\n")
-        print(f"Successfully created '{QUERY_FILE}' with {len(all_queries)} queries.")
+        print(f"Successfully created '{QUERY_FILE_MASTER}' with {len(all_queries)} queries.")
     except IOError as e:
-        print(f"Error: Could not write to file {QUERY_FILE}. {e}")
+        print(f"Error: Could not write to file {QUERY_FILE_MASTER}. {e}")
+
+def run_collection():
+    """
+    Loops through API keys and runs the collection script.
+    It will re-run all queries to find new pages, but ikapi.py will not
+    re-download existing files, thus saving credits.
+    """
+    print("--- Starting Data Collection Process ---")
+
+    # 1. Load API Keys
+    api_keys = load_api_keys()
+    if not api_keys:
         return
 
-    # 3. Construct the command to run ikapi.py
-    command = [
-        sys.executable,  # Use the same python interpreter that is running this script
-        "ikapi.py",
-        "-s", API_TOKEN,
-        "-D", OUTPUT_DIR,
-        "-Q", QUERY_FILE,
-        "-p", str(PAGES_PER_QUERY),
-        "--pathbysrc"
-    ]
+    # 2. Make sure the master query file exists
+    write_master_query_file()
 
-    print(f"\nExecuting command: {' '.join(command)}\n")
+    # 3. Loop through each API key
+    for i, api_key in enumerate(api_keys):
+        print(f"\n--- Attempting to run with API Key #{i + 1} ---")
 
-    # 4. Run the ikapi.py script as a subprocess
-    try:
-        # The process will run in the current terminal window, showing all output
-        subprocess.run(command, check=True)
-        print("\n--- Data Collection Process Completed Successfully ---")
-    except FileNotFoundError:
-        print("Error: 'ikapi.py' not found. Make sure it's in the same directory.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error: The data collection script failed with exit code {e.returncode}.")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        # 4. Construct the command
+        command = [
+            sys.executable,  # Use the current Python interpreter
+            "ikapi.py",
+            "-s", api_key,
+            "-D", OUTPUT_DIR,
+            "-Q", QUERY_FILE_MASTER, # Always use the master list of all queries
+            "-p", str(PAGES_PER_QUERY),
+            "--pathbysrc"
+        ]
+
+        print(f"Executing command for {PAGES_PER_QUERY} pages per query...")
+
+        # 5. Run the ikapi.py script
+        try:
+            # We use subprocess.run, which waits for the command to complete
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+
+            # If the script finishes without error, it means all queries
+            # were completed to the target page count. We are done.
+            print("\n--- Data Collection Process Completed Successfully ---")
+            print(result.stdout)
+            break # Exit the loop
+
+        except subprocess.CalledProcessError as e:
+            # This block will catch the 403 error we raised in ikapi.py
+            print(f"--- API Key #{i + 1} Failed or Expired ---")
+            print("Error log from ikapi.py:")
+            print(e.stderr)
+            print("Trying next key in the list...")
+            continue # Move to the next key in the loop
+
+        except FileNotFoundError:
+            print("Error: 'ikapi.py' not found. Make sure it's in the same directory.")
+            return # A fatal error, so stop
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return # A fatal error, so stop
+
+    print("All API keys have been tried.")
 
 if __name__ == '__main__':
     run_collection()
