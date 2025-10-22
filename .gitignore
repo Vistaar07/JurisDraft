@@ -20,3 +20,5 @@ Backend/faiss_index/
 Backend/CaseLawData/
 
 *.pkl
+*.faiss
+*.log

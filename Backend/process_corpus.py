@@ -9,7 +9,7 @@ from langchain.docstore.document import Document
 # --- Configuration ---
 ACTS_DIR = "Acts/"
 CASE_LAW_DIR = "CaseLawData/"
-OUTPUT_FILE = "processed_corpus.pkl"
+OUTPUT_FILE = "processed_corpus_22_OCT.pkl"
 
 # --- Text Processing Functions (from your original script) ---
 def extract_text_from_pdf(pdf_path):
