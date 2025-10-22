@@ -44,11 +44,20 @@ class IKApi:
         connection = http.client.HTTPSConnection(self.basehost)
         connection.request('POST', url, headers = self.headers)
         response = connection.getresponse()
+
+        # --- START OF MODIFICATION ---
+        if response.status == 403:
+            # 403 Forbidden is a hard stop for an invalid key or rate limit
+            self.logger.error(f"API Key Failed (403 Forbidden) for URL: {url}")
+            # This exception will be caught and will crash the worker process
+            raise Exception("API Key Failed (403 Forbidden)")
+        # --- END OF MODIFICATION ---
+
         results = response.read()
 
         if isinstance(results, bytes):
             results = results.decode('utf8')
-        return results 
+        return results
    
     def call_api(self, url):
         count = 0
