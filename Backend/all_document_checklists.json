@@ -1,0 +1,628 @@
+{
+    "offer_letter": {
+        "display_name": "Offer Letter",
+        "governing_acts": [
+            "The Indian Contract Act, 1872"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Parties and Offer",
+                "description": "Verify the full legal names and addresses of both the Employer and the Employee are clearly stated, constituting a valid offer to a specific person.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Consideration (Compensation)",
+                "description": "Ensure salary/compensation is explicitly stated with a clear breakdown (Basic, HRA, etc.), currency (INR), and payment frequency.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Lawful Object (Job Role)",
+                "description": "Confirm a specific job title and a summary of key responsibilities are included, ensuring the object of the contract is lawful and clear.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Term and Duration",
+                "description": "Verify a specific joining date, employment term (fixed/indefinite), and details of any probation period are mentioned.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Sale of Goods Act, 1930.pdf",
+                        "text": "1 \n \nTHE SALE OF GOODS ACT, 1930 \n______ \nARRANGMENT OF SECTIONS \n______ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Definitions. \n3. Application of provisions of Act 9 of 1872. \nCHAPTER II \nFORMATION OF THE CONTRACT \nContract of Sale \n4. Sale and agreement to sell. \nFormalities of the Contract \n5. Contract of sale how made. \nSubject-matter of contract \n6. Exist..."
+                    }
+                ]
+            },
+            {
+                "topic": "Termination Clause",
+                "description": "Check for a notice period clause, specifying the duration for both employer and employee, ensuring it is reasonable.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Partnership Act, 1932.pdf",
+                        "text": " \n \n1 \n \n \n \n \n \n \n \n \nTHE INDIAN PARTNERSHIP ACT, 1932 \n(ACT NO. 9 OF 1932) \n[As on the 7th July, 2025] \n \n \n \n \n2 \nList of Amending Acts \n \n1. The Repealing and Amending Act, 1934 (24 of 1934). \n2. The Part B States (Laws) Act, 1951 (3 of 1951). \n___________ \n \n \nLIST OF ABBREVIATIONS USED \n \nCl.,cls.              . \n. \n. \n.            .          for            Clause, clauses. \nIns.            ..."
+                    }
+                ]
+            },
+            {
+                "topic": "Governing Law and Jurisdiction",
+                "description": "Confirm the presence of a 'Governing Law and Jurisdiction' clause, specifying Indian law and a specific city for jurisdiction.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            }
+        ]
+    },
+    "nda": {
+        "display_name": "Non-Disclosure Agreement (NDA)",
+        "governing_acts": [
+            "Indian Contract Act, 1872",
+            "The IT Act, 2000"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Definition of Confidential Information",
+                "description": "Analyze the definition of 'Confidential Information'. It must be specific and include reasonable exceptions (e.g., publicly known info). Check if it explicitly covers electronic records as per the IT Act.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Recipient's Obligations",
+                "description": "Verify the clause clearly states the recipient's duties: to maintain secrecy, use information only for the permitted purpose, and implement reasonable security practices.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Term of Confidentiality",
+                "description": "Identify the term of the confidentiality obligation. It must be for a reasonable and specified duration.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Return/Destruction of Information",
+                "description": "Confirm a clause requiring the return or destruction of all materials (including digital copies) upon termination.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            }
+        ]
+    },
+    "non_compete_agreement": {
+        "display_name": "Non-Compete Agreement",
+        "governing_acts": [
+            "Indian Contract Act, 1872 (Section 27)"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Restraint of Trade (Sec 27)",
+                "description": "Acknowledge that the default position under Section 27 is that agreements in restraint of trade are void. The checklist must verify if the clause qualifies for any judicial exceptions.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Test of Reasonableness",
+                "description": "Verify the restriction is reasonable and necessary to protect a legitimate business interest (e.g., trade secrets).",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Code of Civil Procedure, 1908.pdf",
+                        "text": "1 \n \nTHE CODE OF CIVIL PROCEDURE, 1908 \n______ \n \nARRANGEMENT OF SECTIONS \n______ \nPRELIMINARY \nSECTIONS \n1.  Short title, commencement and extent. \n2. Definitions. \n3. Subordination of Courts. \n4. Savings. \n5. Application of the Code to Revenue Courts. \n6. Pecuniary jurisdiction.  \n7. Provincial Small Cause Courts. \n8. Presidency Small Cause Courts. \nPART I \nSUITS IN GENERAL \nJURISDICTION OF THE ..."
+                    }
+                ]
+            },
+            {
+                "topic": "Scope of Restrictions",
+                "description": "Analyze the reasonableness of the non-compete clause in three parts: duration (time), geographical area, and the scope of restricted business activities.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            }
+        ]
+    },
+    "partnership_deed": {
+        "display_name": "Partnership Deed",
+        "governing_acts": [
+            "The Indian Partnership Act, 1932"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Firm Name and Partner Details",
+                "description": "Verify the name of the partnership firm and the full legal names and addresses of all partners are present.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Partnership Act, 1932.pdf",
+                        "text": " \n \n1 \n \n \n \n \n \n \n \n \nTHE INDIAN PARTNERSHIP ACT, 1932 \n(ACT NO. 9 OF 1932) \n[As on the 7th July, 2025] \n \n \n \n \n2 \nList of Amending Acts \n \n1. The Repealing and Amending Act, 1934 (24 of 1934). \n2. The Part B States (Laws) Act, 1951 (3 of 1951). \n___________ \n \n \nLIST OF ABBREVIATIONS USED \n \nCl.,cls.              . \n. \n. \n.            .          for            Clause, clauses. \nIns.            ..."
+                    }
+                ]
+            },
+            {
+                "topic": "Capital Contribution",
+                "description": "Check that the amount of capital (cash or kind) contributed by each partner is clearly stated.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Companies Act, 2013.pdf",
+                        "text": "1 \n \nTHE COMPANIES ACT, 2013 \n__________________ \nARRANGEMENT OF SECTIONS \n___________ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent, commencement and application. \n2. Definitions. \nCHAPTER II \nINCORPORATION OF COMPANY AND MATTERS INCIDENTAL THERETO \n3. Formation of company. \n3A. Members severally liable in certain cases. \n4. Memorandum. \n5. Articles. \n6. Act to override memorandum, ar..."
+                    }
+                ]
+            },
+            {
+                "topic": "Profit and Loss Sharing Ratio",
+                "description": "Ensure the profit and loss sharing ratio is explicitly and unambiguously defined. If absent, the Act presumes it to be equal.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Partnership Act, 1932.pdf",
+                        "text": " \n \n1 \n \n \n \n \n \n \n \n \nTHE INDIAN PARTNERSHIP ACT, 1932 \n(ACT NO. 9 OF 1932) \n[As on the 7th July, 2025] \n \n \n \n \n2 \nList of Amending Acts \n \n1. The Repealing and Amending Act, 1934 (24 of 1934). \n2. The Part B States (Laws) Act, 1951 (3 of 1951). \n___________ \n \n \nLIST OF ABBREVIATIONS USED \n \nCl.,cls.              . \n. \n. \n.            .          for            Clause, clauses. \nIns.            ..."
+                    }
+                ]
+            },
+            {
+                "topic": "Dissolution Clause",
+                "description": "Verify the conditions and procedures for dissolving the partnership are clearly laid out.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Companies Act, 2013.pdf",
+                        "text": "1 \n \nTHE COMPANIES ACT, 2013 \n__________________ \nARRANGEMENT OF SECTIONS \n___________ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent, commencement and application. \n2. Definitions. \nCHAPTER II \nINCORPORATION OF COMPANY AND MATTERS INCIDENTAL THERETO \n3. Formation of company. \n3A. Members severally liable in certain cases. \n4. Memorandum. \n5. Articles. \n6. Act to override memorandum, ar..."
+                    }
+                ]
+            }
+        ]
+    },
+    "mou": {
+        "display_name": "Memorandum of Understanding (MoU)",
+        "governing_acts": [
+            "Indian Contract Act, 1872"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Intent and Binding Nature",
+                "description": "Crucially, verify if the MoU explicitly states which clauses (if any) are intended to be legally binding and which are non-binding statements of intent.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Purpose and Scope",
+                "description": "Ensure the objective and scope of the potential collaboration are clearly defined.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Companies Act, 2013.pdf",
+                        "text": "1 \n \nTHE COMPANIES ACT, 2013 \n__________________ \nARRANGEMENT OF SECTIONS \n___________ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent, commencement and application. \n2. Definitions. \nCHAPTER II \nINCORPORATION OF COMPANY AND MATTERS INCIDENTAL THERETO \n3. Formation of company. \n3A. Members severally liable in certain cases. \n4. Memorandum. \n5. Articles. \n6. Act to override memorandum, ar..."
+                    }
+                ]
+            },
+            {
+                "topic": "Termination/Expiry",
+                "description": "Check for a clear expiry date or conditions under which the MoU will terminate.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            }
+        ]
+    },
+    "shareholder_agreement": {
+        "display_name": "Shareholder Agreement",
+        "governing_acts": [
+            "The Companies Act, 2013"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Share Transfer Restrictions",
+                "description": "Verify for restrictions on share transfers, such as Right of First Refusal (ROFR) or Tag-Along/Drag-Along rights.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Transfer of Property Act, 1882.pdf",
+                        "text": "1 \n \nTHE TRANSFER OF PROPERTY ACT, 1882 \n_________ \nARRANGEMENT OF SECTIONS \n___________ \nPREAMBLE \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title. \nCommencement.  \nExtent. \n2. Repeal of Acts. \nSaving of certain enactments, incidents, rights, liabilities, etc. \n3. Interpretation-clause. \n4. Enactments relating to contracts to be taken as part of Contract Act and \nsupplemental to the Registration..."
+                    }
+                ]
+            },
+            {
+                "topic": "Decision Making & Reserved Matters",
+                "description": "Check for a list of 'Reserved Matters' that require a special majority or unanimous consent of shareholders.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Deadlock Resolution",
+                "description": "Verify if a mechanism to resolve deadlocks between shareholders is defined.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            }
+        ]
+    },
+    "vendor_agreement": {
+        "display_name": "Vendor Agreement",
+        "governing_acts": [
+            "Indian Contract Act, 1872",
+            "The Sale of Goods Act, 1930"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Scope of Work (SOW)",
+                "description": "Ensure the goods to be sold or services to be rendered are described with absolute clarity and specificity.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Payment and Commercials",
+                "description": "Verify that price, payment terms, invoicing schedule, and consequences of late payment are clearly defined.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Sale of Goods Act, 1930.pdf",
+                        "text": "1 \n \nTHE SALE OF GOODS ACT, 1930 \n______ \nARRANGMENT OF SECTIONS \n______ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Definitions. \n3. Application of provisions of Act 9 of 1872. \nCHAPTER II \nFORMATION OF THE CONTRACT \nContract of Sale \n4. Sale and agreement to sell. \nFormalities of the Contract \n5. Contract of sale how made. \nSubject-matter of contract \n6. Exist..."
+                    }
+                ]
+            },
+            {
+                "topic": "Warranties and Representation",
+                "description": "Check for explicit warranties regarding the quality, fitness, and title of goods/services.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Sale of Goods Act, 1930.pdf",
+                        "text": "1 \n \nTHE SALE OF GOODS ACT, 1930 \n______ \nARRANGMENT OF SECTIONS \n______ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Definitions. \n3. Application of provisions of Act 9 of 1872. \nCHAPTER II \nFORMATION OF THE CONTRACT \nContract of Sale \n4. Sale and agreement to sell. \nFormalities of the Contract \n5. Contract of sale how made. \nSubject-matter of contract \n6. Exist..."
+                    }
+                ]
+            },
+            {
+                "topic": "Liability and Indemnity",
+                "description": "Analyze the limitation of liability and indemnification clauses to understand risk allocation.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            }
+        ]
+    },
+    "terms_and_conditions": {
+        "display_name": "Terms & Conditions (T&C)",
+        "governing_acts": [
+            "The IT Act, 2000",
+            "IT Rules, 2021"
+        ],
+        "checklist_items": [
+            {
+                "topic": "User Agreement",
+                "description": "Verify that the T&C are presented as a binding user agreement.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Prohibited Content/Use",
+                "description": "Check for clauses that prohibit users from hosting, displaying, or sharing content that is unlawful, defamatory, obscene, etc., as required by the IT Rules.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Privacy Policy",
+                "description": "Ensure the T&C references a separate, compliant Privacy Policy for handling user data.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Grievance Redressal",
+                "description": "Verify the T&C includes the name and contact details of a Grievance Officer, as mandated by the IT Rules.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            }
+        ]
+    },
+    "loan_repayment_agreement": {
+        "display_name": "Loan Repayment Agreement",
+        "governing_acts": [
+            "The Negotiable Instruments Act, 1881"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Principal and Interest",
+                "description": "Verify the principal loan amount and the exact rate of interest (and its calculation method) are clearly stated.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Negotiable Instruments Act, 1881.pdf",
+                        "text": "1 \nTHE NEGOTIABLE INSTRUMENTS ACT, 1881 \n_____________ \nARRENGMENT OF SECTIONS \n____________ \nCHAPTER I \nPRELIMINARY \nPREAMBLE. \nSECTIONS \n1. Short title. \n   Local extent, \n   Saving of usages relating to hundis, etc., \n   Commencement. \n2. [Repealed.]. \n3. Interpretation-clause. \n   \u201cBanker.\u201d \nCHAPTER II  \nOF NOTES, BILLSAND CHEQUES \n4. \u201cPromissory note.\u201d \n5. \u201cBill of exchange.\u201d \n6. \u201cCheque.\u201d \n7..."
+                    }
+                ]
+            },
+            {
+                "topic": "Repayment Schedule",
+                "description": "Ensure a detailed repayment schedule, including the number of installments (EMIs), due dates, and amounts, is present.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Partnership Act, 1932.pdf",
+                        "text": " \n \n1 \n \n \n \n \n \n \n \n \nTHE INDIAN PARTNERSHIP ACT, 1932 \n(ACT NO. 9 OF 1932) \n[As on the 7th July, 2025] \n \n \n \n \n2 \nList of Amending Acts \n \n1. The Repealing and Amending Act, 1934 (24 of 1934). \n2. The Part B States (Laws) Act, 1951 (3 of 1951). \n___________ \n \n \nLIST OF ABBREVIATIONS USED \n \nCl.,cls.              . \n. \n. \n.            .          for            Clause, clauses. \nIns.            ..."
+                    }
+                ]
+            },
+            {
+                "topic": "Default Clause",
+                "description": "Check for a clause detailing the consequences of default, including penal interest and potential legal action.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Negotiable Instruments Act, 1881.pdf",
+                        "text": "1 \nTHE NEGOTIABLE INSTRUMENTS ACT, 1881 \n_____________ \nARRENGMENT OF SECTIONS \n____________ \nCHAPTER I \nPRELIMINARY \nPREAMBLE. \nSECTIONS \n1. Short title. \n   Local extent, \n   Saving of usages relating to hundis, etc., \n   Commencement. \n2. [Repealed.]. \n3. Interpretation-clause. \n   \u201cBanker.\u201d \nCHAPTER II  \nOF NOTES, BILLSAND CHEQUES \n4. \u201cPromissory note.\u201d \n5. \u201cBill of exchange.\u201d \n6. \u201cCheque.\u201d \n7..."
+                    }
+                ]
+            }
+        ]
+    },
+    "sale_deed": {
+        "display_name": "Sale Deed",
+        "governing_acts": [
+            "The Transfer of Property Act, 1882",
+            "The Registration Act, 1908"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Parties and Property Description",
+                "description": "Verify the full details of the seller and buyer, and a complete, unambiguous description of the property (schedule of property).",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Transfer of Property Act, 1882.pdf",
+                        "text": "1 \n \nTHE TRANSFER OF PROPERTY ACT, 1882 \n_________ \nARRANGEMENT OF SECTIONS \n___________ \nPREAMBLE \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title. \nCommencement.  \nExtent. \n2. Repeal of Acts. \nSaving of certain enactments, incidents, rights, liabilities, etc. \n3. Interpretation-clause. \n4. Enactments relating to contracts to be taken as part of Contract Act and \nsupplemental to the Registration..."
+                    }
+                ]
+            },
+            {
+                "topic": "Sale Consideration",
+                "description": "Ensure the exact sale consideration is mentioned, along with the mode of payment and an acknowledgement of receipt by the seller.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Sale of Goods Act, 1930.pdf",
+                        "text": "1 \n \nTHE SALE OF GOODS ACT, 1930 \n______ \nARRANGMENT OF SECTIONS \n______ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Definitions. \n3. Application of provisions of Act 9 of 1872. \nCHAPTER II \nFORMATION OF THE CONTRACT \nContract of Sale \n4. Sale and agreement to sell. \nFormalities of the Contract \n5. Contract of sale how made. \nSubject-matter of contract \n6. Exist..."
+                    }
+                ]
+            },
+            {
+                "topic": "Indemnity as to Title",
+                "description": "Check for a clause where the seller indemnifies the buyer against any defects in the title of the property.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Sale of Goods Act, 1930.pdf",
+                        "text": "1 \n \nTHE SALE OF GOODS ACT, 1930 \n______ \nARRANGMENT OF SECTIONS \n______ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Definitions. \n3. Application of provisions of Act 9 of 1872. \nCHAPTER II \nFORMATION OF THE CONTRACT \nContract of Sale \n4. Sale and agreement to sell. \nFormalities of the Contract \n5. Contract of sale how made. \nSubject-matter of contract \n6. Exist..."
+                    }
+                ]
+            },
+            {
+                "topic": "Registration Compliance",
+                "description": "The checklist must state that the document is incomplete and invalid until it is properly executed on stamp paper and registered at the sub-registrar's office.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Registration Act, 1908.pdf",
+                        "text": "1 \n \nTHE REGISTRATION ACT, 1908 \n___________ \nARRANGEMENT OF SECTIONS \n___________ \nPART I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Definitions. \nPART II \nOF THE REGISTRATION-ESTABLISHMENT \n3. Inspector-General of Registration. \n4. [Repealed.]. \n5. Districts and sub-districts. \n6. Registrars and Sub-Registrars. \n7. Offices of Registrar and Sub-Registrar. \n8. Inspectors ..."
+                    }
+                ]
+            }
+        ]
+    },
+    "legal_notice": {
+        "display_name": "Legal Notice",
+        "governing_acts": [
+            "The Code of Civil Procedure, 1908"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Parties Identification",
+                "description": "Verify the full names and addresses of the sender (client and advocate) and the recipient are clearly stated.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The IT Act, 2000.pdf",
+                        "text": "1 \n \nTHE INFORMATION TECHNOLOGY ACT, 2000 \n\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 \nARRANGEMENT OF SECTIONS \n\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent, commencement and application. \n2. Definitions. \nCHAPTER II \nDIGITAL SIGNATURE AND ELECTRONIC SIGNATURE \n3. Authentication of electronic records. \n3A. Electronic signature. \nCHAPTER III \nELECTRONIC GOVERNANCE \n4. Legal recognition of electronic records...."
+                    }
+                ]
+            },
+            {
+                "topic": "Factual Narration",
+                "description": "Check that the notice contains a detailed, chronological account of the facts that form the cause of action.",
+                "risk_level": "Medium",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Companies Act, 2013.pdf",
+                        "text": "1 \n \nTHE COMPANIES ACT, 2013 \n__________________ \nARRANGEMENT OF SECTIONS \n___________ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent, commencement and application. \n2. Definitions. \nCHAPTER II \nINCORPORATION OF COMPANY AND MATTERS INCIDENTAL THERETO \n3. Formation of company. \n3A. Members severally liable in certain cases. \n4. Memorandum. \n5. Articles. \n6. Act to override memorandum, ar..."
+                    }
+                ]
+            },
+            {
+                "topic": "Specific Demand/Relief",
+                "description": "Ensure the notice makes a clear and specific demand (e.g., 'pay the sum of INR X') and provides a deadline for compliance.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Code of Civil Procedure, 1908.pdf",
+                        "text": "1 \n \nTHE CODE OF CIVIL PROCEDURE, 1908 \n______ \n \nARRANGEMENT OF SECTIONS \n______ \nPRELIMINARY \nSECTIONS \n1.  Short title, commencement and extent. \n2. Definitions. \n3. Subordination of Courts. \n4. Savings. \n5. Application of the Code to Revenue Courts. \n6. Pecuniary jurisdiction.  \n7. Provincial Small Cause Courts. \n8. Presidency Small Cause Courts. \nPART I \nSUITS IN GENERAL \nJURISDICTION OF THE ..."
+                    }
+                ]
+            },
+            {
+                "topic": "Consequences of Non-Compliance",
+                "description": "Verify the notice clearly states the legal action (e.g., 'initiate civil proceedings') that will be taken if the demands are not met.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Code of Civil Procedure, 1908.pdf",
+                        "text": "1 \n \nTHE CODE OF CIVIL PROCEDURE, 1908 \n______ \n \nARRANGEMENT OF SECTIONS \n______ \nPRELIMINARY \nSECTIONS \n1.  Short title, commencement and extent. \n2. Definitions. \n3. Subordination of Courts. \n4. Savings. \n5. Application of the Code to Revenue Courts. \n6. Pecuniary jurisdiction.  \n7. Provincial Small Cause Courts. \n8. Presidency Small Cause Courts. \nPART I \nSUITS IN GENERAL \nJURISDICTION OF THE ..."
+                    }
+                ]
+            }
+        ]
+    },
+    "indemnity_bond": {
+        "display_name": "Indemnity Bond",
+        "governing_acts": [
+            "Indian Contract Act, 1872"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Indemnifier and Indemnified",
+                "description": "Clearly identify the party giving the indemnity (Indemnifier) and the party being protected (Indemnified).",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            },
+            {
+                "topic": "Scope of Indemnity",
+                "description": "Verify that the specific losses, damages, or costs against which the indemnifier is protecting the indemnified party are clearly and specifically defined.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Indian Contract Act, 1872.pdf",
+                        "text": "1 \n \nTHE INDIAN CONTRACT ACT, 1872 \n____________ \nARRANGEMENT OF SECTIONS \n____________ \nSECTIONS \nPREAMBLE \n \nPRELIMINARY \n1. Short title. \nExtent. \nCommencement. \nSaving. \n2. Interpretation-clause. \n \nCHAPTER I \nOF THE COMMUNICATION, ACCEPTANCE AND  \nREVOCATION OF PROPOSALS \n3. Communication, acceptance and revocation of proposals. \n4. Communication when complete. \n5. Revocation of proposals and..."
+                    }
+                ]
+            }
+        ]
+    },
+    "cease_and_desist": {
+        "display_name": "Cease and Desist Notice",
+        "governing_acts": [
+            "The Copyright Act, 1957",
+            "The Trademarks Act, 1999"
+        ],
+        "checklist_items": [
+            {
+                "topic": "Assertion of Rights",
+                "description": "Verify the notice clearly asserts the sender's ownership of the specific intellectual property (copyright or trademark) being infringed.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "The Copyright Act, 1957.pdf",
+                        "text": "1 \n \nTHE COPYRIGHT ACT, 1957 \n________ \nARRANGEMENT OF SECTIONS \n_______ \nCHAPTER I \nPRELIMINARY \nSECTIONS \n1. Short title, extent and commencement. \n2. Interpretation. \n3. Meaning of publication. \n4. When work not deemed to be published or performed in public. \n5. When work deemed to be first published in India. \n6. Certain disputes to be decided by Appellate Board. \n7. Nationality of author wher..."
+                    }
+                ]
+            },
+            {
+                "topic": "Description of Infringement",
+                "description": "Ensure the notice provides a detailed description of the specific actions by the recipient that constitute infringement.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            },
+            {
+                "topic": "Demand to Cease and Desist",
+                "description": "Check for a clear and unambiguous demand that the recipient immediately stop all infringing activities.",
+                "risk_level": "High",
+                "supporting_evidence": [
+                    {
+                        "doc_id": "IT Rules, 2021.pdf",
+                        "text": " \n \nThe Information Technology (Intermediary Guidelines and Digital Media Ethics Code) \nRules, 20211 \n[updated as on 6.4.2023] \nIn exercise of the powers conferred by sub-section (1), clauses (z) and (zg) of sub-section (2) \nof section 87 of the Information Technology Act, 2000 (21 of 2000), and in supersession of the \nInformation Technology (Intermediaries Guidelines) Rules, 2011, except as respe..."
+                    }
+                ]
+            }
+        ]
+    }
+}

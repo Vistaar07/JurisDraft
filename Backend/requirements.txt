@@ -1,0 +1,18 @@
+# Core LangChain and NLP Libraries
+langchain
+langchain-community
+langchain-core
+langchain-google-genai
+spacy
+PyMuPDF
+python-docx
+regex
+ 
+# Embedding and Vector Store Libraries
+sentence-transformers
+faiss-cpu
+ 
+# API Server Libraries
+fastapi
+uvicorn[standard]
+ 

@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# IntelliJ IDE
+.idea/
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/build/
+
+# Backend
+Backend/faiss_index/
+Backend/CaseLawData/
+
+*.pkl
