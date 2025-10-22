@@ -25,7 +25,7 @@ model_kwargs = {'device': 'cpu'}
 embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs=model_kwargs)
 
 # Load the FAISS index from the local directory
-FAISS_INDEX_PATH = "faiss_index"
+FAISS_INDEX_PATH = "faiss_index_22_OCT"
 db = FAISS.load_local(FAISS_INDEX_PATH, embeddings, allow_dangerous_deserialization=True)
 retriever = db.as_retriever(search_kwargs={'k': 7}) # Retrieve 7 relevant chunks for more context
 
