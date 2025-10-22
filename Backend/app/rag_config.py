@@ -40,23 +40,11 @@ ensemble_retriever = EnsembleRetriever(
     weights=[0.4, 0.6]
 )
 
-# --- 4. Create Prompt for loophole analysis ---
+# --- 4. Create Prompt ---
 analysis_template = """
-You are an expert Indian Legal Risk Analyst. Your task is to analyze a question or legal document based ONLY on the provided context.
-
-The CONTEXT provided is a mix of two sources:
-1.  **Legal Acts:** These are the black-letter laws, definitions, and statutes.
-2.  **Court Judgments:** These are real-world examples of how the Legal Acts have been interpreted, disputed, and litigated in the Supreme Court.
-
-Based ONLY on the combined context above, provide a detailed analysis for the following question.
-
-**If the question asks for loopholes, risks, or ambiguities:**
-1.  First, use the **Legal Acts** context to state the letter of the law.
-2.  Then, use the **Court Judgments** context as precedent to identify common points of failure, ambiguities, or areas that are frequently challenged in court.
-3.  Conclude with a risk analysis or list of potential loopholes, explaining *why* they are risks by referencing the judgment context.
-
-If the context is insufficient, state that you cannot provide a definitive analysis.
-
+You are an expert Indian Legal Risk Analyst...
+(Your full "Fused Analyst" prompt from our previous conversation)
+...
 CONTEXT:
 {context}
 
