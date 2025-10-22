@@ -3,10 +3,11 @@ import subprocess
 import sys
 
 # --- Configuration ---
-API_TOKEN = "75a160155544a9618542b1708694aa48422a0d35"
+API_TOKEN = "b7eabe08fb3e7e21fb666dca1d3ff378dc5f991b"
 OUTPUT_DIR = "CaseLawData"
-QUERY_FILE = "queries.txt"
-PAGES_PER_QUERY = 10  # WARNING: Set this to a low number (e.g., 2) for testing to manage costs.
+# This file will be generated with only the queries that need to be run.
+QUERY_FILE_TO_RUN = "queries_to_run.txt"
+PAGES_PER_QUERY = 10  # Set this to a low number (e.g., 2) for testing.
 
 # A comprehensive dictionary of all queries organized by category
 QUERIES_BY_CATEGORY = {
@@ -87,40 +88,70 @@ QUERIES_BY_CATEGORY = {
 
 def run_collection():
     """
-    Writes queries to a file and executes the ikapi.py script to download data.
+    Checks for already downloaded data and runs ikapi.py only for missing queries.
     """
     print("--- Starting Data Collection Process ---")
-    
-    # 1. Flatten all queries from the dictionary into a single list
+
+    # 1. Get list of all desired queries from the dictionary
     all_queries = []
     for category, subcategories in QUERIES_BY_CATEGORY.items():
         for subcategory, queries in subcategories.items():
             all_queries.extend(queries)
+    print(f"Total queries defined in script: {len(all_queries)}")
 
-    # 2. Write all queries to the input file
-    try:
-        with open(QUERY_FILE, 'w', encoding='utf-8') as f:
-            for query in all_queries:
-                f.write(f"{query}\n")
-        print(f"Successfully created '{QUERY_FILE}' with {len(all_queries)} queries.")
-    except IOError as e:
-        print(f"Error: Could not write to file {QUERY_FILE}. {e}")
+    # 2. Get list of queries *already downloaded* by checking folder names
+    downloaded_queries = set()
+    if os.path.isdir(OUTPUT_DIR):
+        try:
+            # os.listdir gives a list of all folder names in CaseLawData
+            downloaded_queries = set(os.listdir(OUTPUT_DIR))
+            print(f"Found {len(downloaded_queries)} already downloaded query folders.")
+        except OSError as e:
+            print(f"Warning: Could not list directory {OUTPUT_DIR}. {e}")
+    else:
+        print(f"'{OUTPUT_DIR}' directory not found. Will run all queries.")
+        os.makedirs(OUTPUT_DIR) # Create it if it doesn't exist
+
+    # 3. Filter to find only the queries that are NOT downloaded
+    queries_to_run = []
+    for query in all_queries:
+        if query not in downloaded_queries:
+            queries_to_run.append(query)
+        else:
+            print(f"Skipping already downloaded query: {query}")
+
+    print(f"\nFound {len(queries_to_run)} new queries to run.")
+
+    # 4. If no new queries, we are done.
+    if not queries_to_run:
+        print("No new queries to run. All data is up to date.")
+        print("--- Data Collection Process Completed ---")
         return
 
-    # 3. Construct the command to run ikapi.py
+    # 5. Write the *remaining* queries to the input file
+    try:
+        with open(QUERY_FILE_TO_RUN, 'w', encoding='utf-8') as f:
+            for query in queries_to_run:
+                f.write(f"{query}\n")
+        print(f"Successfully created '{QUERY_FILE_TO_RUN}' with {len(queries_to_run)} queries.")
+    except IOError as e:
+        print(f"Error: Could not write to file {QUERY_FILE_TO_RUN}. {e}")
+        return
+
+    # 6. Construct the command to run ikapi.py with the *new* query file
     command = [
-        sys.executable,  # Use the same python interpreter that is running this script
+        sys.executable,  # Use the current Python interpreter
         "ikapi.py",
         "-s", API_TOKEN,
         "-D", OUTPUT_DIR,
-        "-Q", QUERY_FILE,
+        "-Q", QUERY_FILE_TO_RUN, # Use the new, filtered query file
         "-p", str(PAGES_PER_QUERY),
         "--pathbysrc"
     ]
-    
+
     print(f"\nExecuting command: {' '.join(command)}\n")
-    
-    # 4. Run the ikapi.py script as a subprocess
+
+    # 7. Run the ikapi.py script
     try:
         # The process will run in the current terminal window, showing all output
         subprocess.run(command, check=True)

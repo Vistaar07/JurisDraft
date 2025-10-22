@@ -145,9 +145,9 @@ class IKApi:
             if 'errmsg' in d:
                 self.logger.error('Error in getting doc %s', docid)
                 return success
-        
-            self.logger.info('Saved %s', d['title'])
-            self.storage.save_json(jsonstr, jsonpath)
+
+            # Use .get() to safely access the title, providing a default if it's missing
+            self.logger.info('Saved %s', d.get('title', f'Document ID {docid} (No Title)'));            self.storage.save_json(jsonstr, jsonpath)
             success = True
 
             if orig_needed:
