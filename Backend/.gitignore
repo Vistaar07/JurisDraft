@@ -15,3 +15,5 @@ api_keys.json
 
 # OS-specific
 .DS_Store
+
+data_corpus/Judgments

@@ -1,74 +1,71 @@
-import fitz  # PyMuPDF
 import os
-import re
-import pickle
+from tqdm import tqdm
+import fitz  # PyMuPDF
+from docx import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
+from langchain.schema.document import Document as LangchainDocument
 
-def extract_text_from_pdf(pdf_path):
-    """Extracts text from a PDF file, preserving some structure."""
-    doc = fitz.open(pdf_path)
-    text = ""
-    for page in doc:
-        text += page.get_text()
-    return text
+def load_and_read_doc(file_path):
+    """Loads text from PDF or DOCX file."""
+    try:
+        if file_path.endswith(".pdf"):
+            doc = fitz.open(file_path)
+            text = "".join(page.get_text() for page in doc)
+            doc.close()
+            return text
+        elif file_path.endswith(".docx"):
+            doc = Document(file_path)
+            return "\n".join([para.text for para in doc.paragraphs])
+        else:
+            print(f"Skipping unsupported file type: {file_path}")
+            return None
+    except Exception as e:
+        print(f"Error reading {file_path}: {e}")
+        return None
 
-def clean_text(text):
-    """A more gentle text cleaning function."""
-    # Replace multiple newlines with a single one to preserve paragraphs
-    text = re.sub(r'\n\s*\n', '\n\n', text)
-    # Replace multiple spaces with a single space
-    text = re.sub(r'[ \t]+', ' ', text)
-    return text.strip()
+def process_documents_from_path(corpus_path: str) -> list[LangchainDocument]:
+    """
+    Processes all PDF/DOCX files in a directory, chunks them,
+    and returns a list of Langchain Documents.
+    """
+    all_documents = []
+    print(f"Processing documents from: {corpus_path}")
 
-# --- Main script logic ---
-SOURCE_DIR = "Acts/"
-PROCESSED_DATA_FILE = "processed_documents.pkl"
+    # Walk through the directory
+    for root, _, files in os.walk(corpus_path):
+        for file in tqdm(files, desc=f"Reading files in {root}"):
+            file_path = os.path.join(root, file)
+            text = load_and_read_doc(file_path)
 
-# --- Initialize the splitter ---
-# This splitter tries to break text at paragraph breaks, then lines, then sentences.
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,     # Increased chunk size for potentially complex legal sections
-    chunk_overlap=150,   # Increased overlap to maintain context between chunks
-    length_function=len,
-    separators=["\n\n", "\n", ". ", ", ", " "], # Explicitly define separators
-)
+            if text:
+                # Use RecursiveCharacterTextSplitter for smart chunking
+                text_splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=1000,
+                    chunk_overlap=200,
+                    length_function=len
+                )
+                chunks = text_splitter.split_text(text)
 
-all_documents = []
+                # Create documents with metadata
+                for i, chunk in enumerate(chunks):
+                    doc = LangchainDocument(
+                        page_content=chunk,
+                        metadata={
+                            "source": file_path,
+                            "chunk_number": i
+                        }
+                    )
+                    all_documents.append(doc)
 
-# Loop through your downloaded files
-print("Starting processing of files in Acts/ folder...")
-for filename in os.listdir(SOURCE_DIR):
-    if not filename.endswith(".pdf"):
-        continue
+    print(f"Processed {len(all_documents)} document chunks.")
+    return all_documents
 
-    input_path = os.path.join(SOURCE_DIR, filename)
-    print(f"Processing: {filename}")
-    
-    # 1. Extract Text
-    raw_text = extract_text_from_pdf(input_path)
-    
-    # 2. Clean Text
-    cleaned_text = clean_text(raw_text)
-    
-    # 3. Split Text into Chunks
-    chunks = text_splitter.split_text(cleaned_text)
-    
-    # 4. Create Document objects with metadata
-    for i, chunk_text in enumerate(chunks):
-        doc = Document(
-            page_content=chunk_text,
-            metadata={
-                "source_document": filename,
-                "chunk_index": i
-            }
-        )
-        all_documents.append(doc)
+if __name__ == "__main__":
+    # This allows you to test the script directly
+    print("Testing processing for Acts...")
+    acts_docs = process_documents_from_path("../data_corpus/Acts")
+    print(f"Found {len(acts_docs)} chunks for Acts.")
 
-print(f"\nCreated a total of {len(all_documents)} documents from all files.")
-
-# 5. Save the processed documents for the next phase
-with open(PROCESSED_DATA_FILE, 'wb') as f:
-    pickle.dump(all_documents, f)
-
-print(f"All processed documents saved to '{PROCESSED_DATA_FILE}'.")
+    print("\nTesting processing for Judgments...")
+    judgment_docs = process_documents_from_path("../data_corpus/Judgments")
+    print(f"Found {len(judgment_docs)} chunks for Judgments.")
