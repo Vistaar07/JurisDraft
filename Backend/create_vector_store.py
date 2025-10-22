@@ -3,7 +3,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
  
 # --- 1. Load the processed documents ---
-PROCESSED_DATA_FILE = "processed_corpus.pkl"
+PROCESSED_DATA_FILE = "processed_corpus_22_OCT.pkl"
 print(f"Loading processed documents from {PROCESSED_DATA_FILE}...")
 with open(PROCESSED_DATA_FILE, 'rb') as f:
     all_documents = pickle.load(f)
@@ -28,7 +28,7 @@ db = FAISS.from_documents(all_documents, embeddings)
 print("Vector store created successfully.")
  
 # --- 4. Save the vector store locally ---
-FAISS_INDEX_PATH = "faiss_index"
+FAISS_INDEX_PATH = "faiss_index_22_OCT"
 db.save_local(FAISS_INDEX_PATH)
 print(f"FAISS index has been saved to '{FAISS_INDEX_PATH}'.")
  
