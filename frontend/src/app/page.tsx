@@ -1,13 +1,19 @@
-import styles from "./page.module.css";
+import HeroSection from "@/components/home/hero-section";
+import DemoSection from "@/components/home/demo-section";
+import HowItWorksSection from "@/components/home/how-it-works";
+import PricingSection from "@/components/home/pricing-section";
+import CTASection from "@/components/home/cta-section";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <h1 className="flex flex-col bg-amber-950 text-rose-300 p-4 rounded-lg">
-          Hello from Tailwind!
-        </h1>
-      </main>
+    <div className="relative w-full">
+      <div className="flex flex-col">
+        <HeroSection />
+        <DemoSection />
+        <HowItWorksSection />
+        <PricingSection />
+        <CTASection />
+      </div>
     </div>
   );
 }
