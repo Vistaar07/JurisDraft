@@ -23,6 +23,7 @@ Backend/CaseLawData/
 *.faiss
 *.log
 
+.env*
 Backend/evaluation/**/*.csv
 Backend/evaluation/**/*.json
 Backend/evaluation/**/*.jsonl
