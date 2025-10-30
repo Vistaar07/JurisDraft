@@ -2,7 +2,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import path from "path";
 
 export default function NavLink({
   href,
@@ -25,6 +24,7 @@ export default function NavLink({
         className,
         isActive && "text-rose-500"
       )}
+      suppressHydrationWarning
     >
       {children}
     </Link>

@@ -4,14 +4,14 @@ import { Badge } from "../ui/badge";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-rose-100/30 bg-gradient-to-b from-white to-gray-50">
+    <footer className="relative overflow-hidden border-t border-rose-100/30 bg-linear-to-b from-white to-gray-50">
       {/* Background decoration */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 transform-gpu overflow-hidden blur-3xl"
       >
         <div
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-rose-200/30 via-rose-300 to-rose-50/5 opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem] animate-gradient-x"
+          className="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-rose-200/30 via-rose-300 to-rose-50/5 opacity-20 sm:left-[calc(50%+36rem)] sm:w-288.75 animate-gradient-x"
           style={{
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.8% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
@@ -23,7 +23,7 @@ export default function Footer() {
         className="pointer-events-none absolute bottom-0 left-0 right-0 -z-10 transform-gpu overflow-hidden blur-2xl"
       >
         <div
-          className="relative left-[calc(50%+11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-r from-rose-500/10 to-rose-600/30 opacity-10 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] animate-gradient-x"
+          className="relative left-[calc(50%+11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-r from-rose-500/10 to-rose-600/30 opacity-10 sm:left-[calc(50%-30rem)] sm:w-288.75 animate-gradient-x"
           style={{
             clipPath:
               "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.8% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
@@ -36,7 +36,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="md:col-span-5 flex flex-col">
             <div className="flex items-center gap-2 mb-4 group">
-              <div className="p-[1px] overflow-hidden rounded-md bg-linear-to-r from-rose-500/10 to-transparent">
+              <div className="p-px overflow-hidden rounded-md bg-linear-to-r from-rose-500/10 to-transparent">
                 <div className="bg-white rounded-md p-1">
                   <FileText className="w-7 h-7 text-rose-600 group-hover:scale-110 transition-transform duration-300" />
                 </div>
@@ -45,7 +45,7 @@ export default function Footer() {
                 JurisDraft
               </span>
             </div>
-            <div className="relative p-[1px] overflow-hidden rounded-lg bg-gradient-to-r from-rose-200/30 via-rose-500/5 to-transparent mb-6">
+            <div className="relative p-px overflow-hidden rounded-lg bg-linear-to-r from-rose-200/30 via-rose-500/5 to-transparent mb-6">
               <div className="bg-white/80 backdrop-blur-xs rounded-lg p-4 border border-rose-100/30">
                 <p className="text-gray-600">
                   Generate professional legal documents instantly with
@@ -54,7 +54,7 @@ export default function Footer() {
               </div>
             </div>{" "}
             <div className="mt-auto">
-              <div className="relative p-4 overflow-hidden rounded-lg bg-gradient-to-r from-rose-600/50 to-rose-500/10 border-2 border-rose-300 mb-3 group">
+              <div className="relative p-4 overflow-hidden rounded-lg bg-linear-to-r from-rose-600/50 to-rose-500/10 border-2 border-rose-300 mb-3 group">
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm transition-opacity group-hover:opacity-0 duration-300"></div>
                 <div className="relative flex items-center gap-2">
                   <div className="p-1.5 bg-white rounded-full border border-rose-100 shadow-sm">

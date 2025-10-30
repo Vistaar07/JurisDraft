@@ -1,10 +1,12 @@
-import { pricingPlans } from "@/utils/constants";
+"use client";
+
+// import { pricingPlans } from "@/utils/constants";
 // import { currentUser } from "@clerk/nextjs/server";
 import { Badge } from "@/components/ui/badge";
 import { Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default async function PlanBadge() {
+export default function PlanBadge() {
   //   const user = await currentUser();
 
   //   if (!user?.id) return null;

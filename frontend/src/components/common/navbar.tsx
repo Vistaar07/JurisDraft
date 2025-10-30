@@ -1,3 +1,5 @@
+"use client";
+
 import { Scale } from "lucide-react";
 import NavLink from "./nav-link";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
@@ -27,7 +29,9 @@ export default function Navbar() {
           <div className="flex gap-2 items-center">
             <NavLink href="/generate">Generate Document</NavLink>
             <PlanBadge />
-            <UserButton />
+            <div suppressHydrationWarning>
+              <UserButton />
+            </div>
           </div>
         </SignedIn>
         <SignedOut>
