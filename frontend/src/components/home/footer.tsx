@@ -9,19 +9,16 @@ const Footer = () => {
       <div className="container mx-auto px-4 md:px-6">
         {/* Main grid layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          
           {/* Column 1: Brand, Newsletter, Socials */}
           <div className="md:col-span-2 lg:col-span-1">
             {/* Brand */}
             <Link href="/" className="flex items-center gap-2 mb-4 group">
               <Scale className="h-7 w-7 text-amber-400 group-hover:scale-110 transition-transform" />
-              <span className="text-2xl font-bold text-white">
-                JurisDraft
-              </span>
+              <span className="text-2xl font-bold text-white">JurisDraft</span>
             </Link>
             <p className="text-neutral-400 text-sm max-w-xs">
-              AI-powered legal assistance to help you draft complex documents with
-              multi-model analysis.
+              AI-powered legal assistance to help you draft complex documents
+              with multi-model analysis.
             </p>
 
             {/* Newsletter */}
@@ -52,13 +49,22 @@ const Footer = () => {
             <div className="mt-6">
               <h4 className="font-semibold text-white mb-3">Follow Us</h4>
               <div className="flex gap-4">
-                <Link href="#" className="text-neutral-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
                   <Linkedin className="h-6 w-6" />
                 </Link>
-                <Link href="#" className="text-neutral-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
                   <Twitter className="h-6 w-6" />
                 </Link>
-                <Link href="#" className="text-neutral-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
                   <Mail className="h-6 w-6" />
                 </Link>
               </div>
@@ -71,25 +77,93 @@ const Footer = () => {
               Legal Resources
             </h4>
             <ul className="space-y-3">
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Case Law Database</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Document Templates</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Legal Dictionary</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Legal Forms</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">AI Legal Research</Link></li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Case Law Database
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Document Templates
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Legal Dictionary
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Legal Forms
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  AI Legal Research
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Column 3: Company */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">
-              Company
-            </h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Company</h4>
             <ul className="space-y-3">
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Our Team</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Careers</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Support</Link></li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Our Team
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Support
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -99,11 +173,46 @@ const Footer = () => {
               Legal Info
             </h4>
             <ul className="space-y-3">
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Cookie Policy</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Disclaimer</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-white transition-colors">Accessibility</Link></li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Disclaimer
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="text-neutral-400 hover:text-white transition-colors"
+                >
+                  Accessibility
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

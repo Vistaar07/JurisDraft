@@ -82,21 +82,15 @@ const PricingSection = () => {
               )}
 
               {/* Plan Header */}
-              <h3 className="text-2xl font-semibold text-white">
-                {plan.name}
-              </h3>
-              <p className="text-neutral-400 mt-2 mb-6">
-                {plan.description}
-              </p>
+              <h3 className="text-2xl font-semibold text-white">{plan.name}</h3>
+              <p className="text-neutral-400 mt-2 mb-6">{plan.description}</p>
 
               {/* Price */}
               <div className="mb-6">
                 <span className="text-5xl font-extrabold text-white">
                   {plan.price}
                 </span>
-                <span className="text-lg text-neutral-500">
-                  {plan.period}
-                </span>
+                <span className="text-lg text-neutral-500">{plan.period}</span>
               </div>
 
               {/* Features */}
