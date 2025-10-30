@@ -1,78 +1,156 @@
-import { BackgroundCircles } from "@/components/ui/shadcn-io/background-circles";
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { ArrowRight, FileText } from "lucide-react";
-import Image from "next/image";
+import { ArrowRight, Scale, FileText, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import AnimatedContent from "@/components/bits/AnimatedContent";
+import BgGradient from "@/components/common/bg-gradient";
+import {
+  MotionDiv,
+  MotionH1,
+  MotionH2,
+  MotionSection,
+  MotionSpan,
+} from "@/components/common/motion-wrapper";
+import {
+  buttonVariants,
+  containerVariants,
+  itemsVariants,
+} from "@/utils/constants";
 
-const HeroSection = () => {
+export default function HeroSection() {
   return (
-    <section
-      id="hero"
-      className="relative w-full min-h-screen flex items-start pt-32 bg-black overflow-hidden"
+    <MotionSection
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="relative mx-auto flex flex-col z-0
+    items-center justify-center min-h-screen transition-all
+    animate-in py-16 lg:px-12 max-w-7xl overflow-hidden bg-white"
     >
-      {/* Top/Bottom Fade Mask */}
-      <div
-        className="absolute inset-0 z-20"
-        style={{
-          maskImage:
-            "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
-        }}
-      />
+      {/* Background Gradient */}
+      <BgGradient className="from-rose-500 via-red-500 to-pink-500 opacity-20" />
 
-      {/* Main content container */}
-      <div className="container relative z-30 grid md:grid-cols-2 items-center gap-8 px-4 md:px-6 py-32">
-        {/* Left: Text + Circles */}
-        <div className="relative flex justify-start items-center h-full">
-          <BackgroundCircles
-            variant="septenary"
-            className="relative -left-1/4 md:left-0 opacity-40 w-[500px] h-[500px] md:w-[600px] md:h-[600px] flex items-center justify-center"
+      {/* Badge */}
+      <MotionDiv
+        variants={itemsVariants}
+        className="relative p-[3px] overflow-hidden mb-8 sm:mb-10 lg:mb-12
+        rounded-full bg-linear-to-r from-rose-300 via-rose-500 
+        to-rose-800 animate-gradient-x group"
+      >
+        <Badge
+          variant={"secondary"}
+          className="relative px-8 py-3 text-base 
+          font-medium bg-white rounded-full group-hover:bg-gray-50 
+          transition-colors duration-200 flex items-center gap-3"
+        >
+          <Sparkles className="size-5 text-rose-600 animate-pulse" />
+          <p className="text-base text-rose-600 font-semibold">
+            AI-Powered Legal Solutions
+          </p>
+        </Badge>
+      </MotionDiv>
+
+      {/* Main Heading */}
+      <MotionH1
+        variants={itemsVariants}
+        className="font-bold m-6 sm:mb-8 lg:mb-10 text-center text-4xl sm:text-5xl lg:text-7xl 
+        text-gray-900 px-4 leading-tight"
+      >
+        Draft Legal Documents with{" "}
+        <span className="relative inline-block">
+          <MotionSpan
+            whileHover={buttonVariants}
+            className="relative z-10 px-2"
           >
-            {/* Layer 2: Content (Now passed as children) */}
-            <div className="relative z-10 flex flex-col items-start text-left gap-4 p-8 -mt-20 ml-8 md:ml-16">
-              <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tighter">
-                Draft Legal Documents{" "}
-                <span className="text-amber-400">Instantly.</span>
-              </h1>
-              <p className="text-lg text-neutral-300 max-w-lg">
-                Stop wrestling with templates. JurisDraft uses advanced AI to
-                analyze your needs and generate precise, professional legal
-                documents in minutes.
-              </p>
+            Intelligence
+          </MotionSpan>
+          <span
+            className="absolute inset-0 bg-rose-200/50 -rotate-2
+          rounded-lg transform -skew-y-1"
+            aria-hidden="true"
+          ></span>
+        </span>
+      </MotionH1>
 
-              {/* Buttons are now here, after the text */}
-              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-4">
-                <Button
-                  size="lg"
-                  className="bg-amber-400 text-black hover:bg-amber-300 font-bold"
-                >
-                  Get Started
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-neutral-700 hover:bg-neutral-900 hover:text-white"
-                >
-                  Learn More
-                  <FileText className="h-5 w-5 ml-2" />
-                </Button>
-              </div>
-            </div>
-          </BackgroundCircles>
-        </div>
+      {/* Subheading */}
+      <MotionH2
+        variants={itemsVariants}
+        className="text-lg sm:text-xl lg:text-2xl 
+      text-center px-6 lg:px-0 lg:max-w-4xl text-gray-600 m-10 sm:m-12 lg:m-14 leading-relaxed"
+      >
+        Generate professional legal documents in minutes with AI-powered
+        precision. From contracts to compliance checklists, JurisDraft handles
+        the complexity.
+      </MotionH2>
 
-        {/* Right: Image */}
-        <div className="hidden md:flex relative justify-end items-center h-[600px]">
-          <Image
-            src={`/scalefinal.jpg`}
-            alt="Statue of Lady Justice"
-            fill
-            className="object-cover object-right"
-            priority
-          />
+      {/* Feature Pills */}
+      <MotionDiv
+        variants={itemsVariants}
+        className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 lg:gap-6 mb-10 sm:mb-12 lg:mb-14 px-4"
+      >
+        <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-rose-50 border border-rose-200">
+          <Scale className="h-5 w-5 text-rose-600" />
+          <span className="text-sm sm:text-base font-medium text-rose-700">
+            Legal Expertise
+          </span>
         </div>
-      </div>
-    </section>
+        <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-red-50 border border-red-200">
+          <FileText className="h-5 w-5 text-red-600" />
+          <span className="text-sm sm:text-base font-medium text-red-700">
+            Smart Templates
+          </span>
+        </div>
+        <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-pink-50 border border-pink-200">
+          <Sparkles className="h-5 w-5 text-pink-600" />
+          <span className="text-sm sm:text-base font-medium text-pink-700">
+            AI-Powered
+          </span>
+        </div>
+      </MotionDiv>
+
+      {/* CTA Button */}
+      <MotionDiv
+        variants={itemsVariants}
+        whileHover={buttonVariants}
+        className="mb-10 sm:mb-12 lg:mb-16"
+      >
+        <AnimatedContent
+          distance={25}
+          direction="vertical"
+          reverse={false}
+          duration={1}
+          ease="bounce.out"
+          initialOpacity={0}
+          animateOpacity
+          scale={1.1}
+          threshold={0.2}
+          delay={0.3}
+        >
+          <Button
+            variant={"link"}
+            className="text-white text-base
+        sm:text-lg lg:text-xl rounded-full px-10 sm:px-12 lg:px-16 py-7 sm:py-8 lg:py-9
+        bg-linear-to-r from-slate-900 to-rose-900 hover:from-rose-500 
+        hover:to-slate-900 font-bold hover:no-underline shadow-lg 
+        hover:shadow-xl transition-all duration-300 group"
+          >
+            <Link href="/generate" className="flex gap-3 items-center">
+              <span>Start Drafting Now</span>
+              <ArrowRight className="group-hover:translate-x-1 transition-transform duration-200" />
+            </Link>
+          </Button>
+        </AnimatedContent>
+      </MotionDiv>
+
+      {/* Trust Indicators */}
+      <MotionDiv
+        variants={itemsVariants}
+        className="text-center text-sm sm:text-base text-gray-500"
+      >
+        <p>Trusted by legal professionals worldwide</p>
+      </MotionDiv>
+    </MotionSection>
   );
-};
-
-export default HeroSection;
+}
