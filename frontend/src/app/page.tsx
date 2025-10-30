@@ -12,7 +12,7 @@ export default function Home() {
         <Navbar />
         <HeroSection />
         <HowItWorksSection />
-        {/* <PricingSection /> */}
+        <PricingSection />
         {/* <CTASection /> */}
         {/* <Footer /> */}
       </div>
