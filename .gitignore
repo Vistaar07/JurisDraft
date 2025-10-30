@@ -24,3 +24,6 @@ Backend/CaseLawData/
 *.log
 
 .env*
+Backend/evaluation/**/*.csv
+Backend/evaluation/**/*.json
+Backend/evaluation/**/*.jsonl

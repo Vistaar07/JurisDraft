@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+
+# Generated Data
+*.pkl
+faiss_*
+*.log
+
+# Sensitive
+api_keys.json
+
+# OS-specific
+.DS_Store
+
+data_corpus/Judgments

@@ -1,18 +1,43 @@
-# Core LangChain and NLP Libraries
+# --- Core LangChain Libraries ---
+# Used for the main RAG pipeline, prompts, and models
 langchain
 langchain-community
 langchain-core
 langchain-google-genai
-spacy
-PyMuPDF
-python-docx
-regex
- 
-# Embedding and Vector Store Libraries
-sentence-transformers
-faiss-cpu
- 
-# API Server Libraries
+langchain-huggingface
+langchain-text-splitters
+
+# --- API Server Libraries ---
+# Used to run the FastAPI application
 fastapi
 uvicorn[standard]
- 
+pydantic
+
+# --- Embedding and Vector Store Libraries ---
+# Used for creating and querying FAISS vector stores
+# sentence-transformers is the core embedding model
+# faiss-cpu is the vector store (CPU-version is fine on Mac/Windows without CUDA)
+# torch is a dependency for sentence-transformers and used explicitly in scripts
+sentence-transformers
+# faiss-cpu
+torch
+
+# --- Document Processing Libraries ---
+# Used in the scripts to parse and clean source documents
+PyMuPDF        # For PDF parsing (import fitz)
+python-docx    # For .docx parsing (import docx)
+spacy          # For text splitting and processing
+regex          # For advanced regex operations in splitting
+pillow         # Required by PIL import in first_process_corpus.py
+pytesseract    # Required for OCR fallback in first_process_corpus.py
+
+# --- Utilities & Evaluation ---
+# Used by helper scripts and the evaluation client
+requests       # For evaluation/client.py and scripts/ikapi.py (if used)
+tqdm           # For progress bars in data processing scripts
+
+# --- Evaluation Add-ons ---
+rouge-score    # For ROUGE metrics in evaluation
+rapidfuzz      # For fuzzy mapping case_name -> source
+pandas         # For result tables and CSV export
+google-generativeai  # For optional Gemini LLM evaluation
