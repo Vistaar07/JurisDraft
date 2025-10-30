@@ -7,6 +7,9 @@
        "-y",
        "@upstash/context7-mcp@latest"
      ]
-   }
+   },
+   "shadcn": {
+      "url": "https://www.shadcn.io/api/mcp"
+    }
   }
 }
