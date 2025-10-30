@@ -26,8 +26,8 @@ export default function HeroSection() {
       initial="hidden"
       animate="visible"
       className="relative mx-auto flex flex-col z-0
-    items-center justify-center min-h-screen transition-all
-    animate-in py-16 lg:px-12 max-w-7xl overflow-hidden bg-white"
+    items-center justify-center py-16 sm:py-20 lg:pb-28 transition-all
+    animate-in lg:px-12 max-w-7xl"
     >
       {/* Background Gradient */}
       <BgGradient className="from-rose-500 via-red-500 to-pink-500 opacity-20" />
@@ -35,17 +35,17 @@ export default function HeroSection() {
       {/* Badge */}
       <MotionDiv
         variants={itemsVariants}
-        className="relative p-[3px] overflow-hidden mb-8 sm:mb-10 lg:mb-12
-        rounded-full bg-linear-to-r from-rose-300 via-rose-500 
+        className="relative p-[3px] overflow-hidden 
+        rounded-full bg-linear-to-r from-rose-200 via-rose-500 
         to-rose-800 animate-gradient-x group"
       >
         <Badge
           variant={"secondary"}
-          className="relative px-8 py-3 text-base 
+          className="relative px-6 py-2 text-base 
           font-medium bg-white rounded-full group-hover:bg-gray-50 
-          transition-colors duration-200 flex items-center gap-3"
+          transition-colors duration-200"
         >
-          <Sparkles className="size-5 text-rose-600 animate-pulse" />
+          <Sparkles className="size-6 text-rose-600 animate-pulse" />
           <p className="text-base text-rose-600 font-semibold">
             AI-Powered Legal Solutions
           </p>
@@ -55,7 +55,7 @@ export default function HeroSection() {
       {/* Main Heading */}
       <MotionH1
         variants={itemsVariants}
-        className="font-bold m-6 sm:mb-8 lg:mb-10 text-center text-4xl sm:text-5xl lg:text-7xl 
+        className="font-bold sm:mb-8 lg:mb-10 text-center text-4xl sm:text-5xl lg:text-7xl 
         text-gray-900 px-4 leading-tight"
       >
         Draft Legal Documents with{" "}
@@ -78,7 +78,7 @@ export default function HeroSection() {
       <MotionH2
         variants={itemsVariants}
         className="text-lg sm:text-xl lg:text-2xl 
-      text-center px-6 lg:px-0 lg:max-w-4xl text-gray-600 m-10 sm:m-12 lg:m-14 leading-relaxed"
+      text-center px-6 lg:px-0 lg:max-w-4xl text-gray-600 sm:m-8 lg:m-4 leading-relaxed"
       >
         Generate professional legal documents in minutes with AI-powered
         precision. From contracts to compliance checklists, JurisDraft handles

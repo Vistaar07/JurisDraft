@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Source_Sans_3 as FontSans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import Navbar from "@/components/common/navbar";
+import Footer from "@/components/common/footer";
+import FadeContent from "@/components/bits/FadeContent";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = FontSans({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: "JurisDraft - AI-Powered Legal Document Generation",
@@ -19,7 +26,15 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} antialiased`}>{children}</body>
+        <body className={`${fontSans.variable} font-sans antialiased`}>
+          <div className="relative flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">
+              <FadeContent>{children}</FadeContent>
+            </main>
+            <Footer />
+          </div>
+        </body>
       </html>
     </ClerkProvider>
   );
