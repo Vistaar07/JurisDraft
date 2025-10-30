@@ -27,9 +27,7 @@ export default function Navbar() {
           <div className="flex gap-2 items-center">
             <NavLink href="/generate">Generate Document</NavLink>
             <PlanBadge />
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+            <UserButton />
           </div>
         </SignedIn>
         <SignedOut>

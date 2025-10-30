@@ -22,3 +22,5 @@ Backend/CaseLawData/
 *.pkl
 *.faiss
 *.log
+
+.env*

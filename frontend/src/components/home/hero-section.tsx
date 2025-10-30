@@ -26,7 +26,7 @@ export default function HeroSection() {
       initial="hidden"
       animate="visible"
       className="relative mx-auto flex flex-col z-0
-    items-center justify-center py-16 sm:py-20 lg:pb-28 transition-all
+    items-center justify-center py-16 sm:py-20 lg:min-h-screen lg:py-0 transition-all
     animate-in lg:px-12 max-w-7xl"
     >
       {/* Background Gradient */}
@@ -35,7 +35,7 @@ export default function HeroSection() {
       {/* Badge */}
       <MotionDiv
         variants={itemsVariants}
-        className="relative p-[3px] overflow-hidden 
+        className="relative p-[3px] overflow-hidden mb-6 lg:mb-8
         rounded-full bg-linear-to-r from-rose-200 via-rose-500 
         to-rose-800 animate-gradient-x group"
       >
@@ -55,7 +55,7 @@ export default function HeroSection() {
       {/* Main Heading */}
       <MotionH1
         variants={itemsVariants}
-        className="font-bold sm:mb-8 lg:mb-10 text-center text-4xl sm:text-5xl lg:text-7xl 
+        className="font-bold mb-6 sm:mb-8 lg:mb-6 text-center text-4xl sm:text-5xl lg:text-6xl 
         text-gray-900 px-4 leading-tight"
       >
         Draft Legal Documents with{" "}
@@ -77,8 +77,8 @@ export default function HeroSection() {
       {/* Subheading */}
       <MotionH2
         variants={itemsVariants}
-        className="text-lg sm:text-xl lg:text-2xl 
-      text-center px-6 lg:px-0 lg:max-w-4xl text-gray-600 sm:m-8 lg:m-4 leading-relaxed"
+        className="text-lg sm:text-xl lg:text-xl 
+      text-center px-6 lg:px-0 lg:max-w-3xl text-gray-600 mb-8 sm:mb-10 lg:mb-8 leading-relaxed"
       >
         Generate professional legal documents in minutes with AI-powered
         precision. From contracts to compliance checklists, JurisDraft handles
@@ -88,7 +88,7 @@ export default function HeroSection() {
       {/* Feature Pills */}
       <MotionDiv
         variants={itemsVariants}
-        className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 lg:gap-6 mb-10 sm:mb-12 lg:mb-14 px-4"
+        className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 lg:gap-6 mb-10 sm:mb-12 lg:mb-8 px-4"
       >
         <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-rose-50 border border-rose-200">
           <Scale className="h-5 w-5 text-rose-600" />
@@ -114,7 +114,7 @@ export default function HeroSection() {
       <MotionDiv
         variants={itemsVariants}
         whileHover={buttonVariants}
-        className="mb-10 sm:mb-12 lg:mb-16"
+        className="mb-10 sm:mb-12 lg:mb-6"
       >
         <AnimatedContent
           distance={25}
@@ -125,7 +125,7 @@ export default function HeroSection() {
           initialOpacity={0}
           animateOpacity
           scale={1.1}
-          threshold={0.2}
+          threshold={0.1}
           delay={0.3}
         >
           <Button
