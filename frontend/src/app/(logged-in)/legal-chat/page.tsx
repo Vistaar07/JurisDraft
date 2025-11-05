@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
 import { containerVariants, itemsVariants } from "@/utils/constants";
@@ -35,7 +37,7 @@ export default function LegalChatPage() {
       id: "welcome",
       role: "assistant",
       content:
-        "Hello! I'm your AI legal assistant. I can help you with legal questions, document drafting guidance, and compliance information. How can I assist you today?",
+        "**Namaste!** 🙏 I'm your AI legal assistant specializing in **Indian law**. I can help you with legal questions about Indian documents, contracts, and compliance. How can I assist you today?",
     },
   ]);
   const [status, setStatus] = useState<"ready" | "submitted" | "streaming">(
@@ -135,8 +137,8 @@ export default function LegalChatPage() {
 
             {/* Subtitle */}
             <p className="text-lg text-gray-600 max-w-2xl">
-              Ask questions about legal documents, contracts, and compliance.
-              Get instant AI-powered guidance.
+              Ask questions about Indian legal documents, contracts, and
+              compliance. Get instant AI-powered guidance for Indian law.
             </p>
           </div>
         </MotionDiv>
@@ -144,10 +146,10 @@ export default function LegalChatPage() {
         {/* Chat Container */}
         <MotionDiv
           variants={itemsVariants}
-          className="flex-1 flex flex-col bg-white rounded-2xl border border-rose-200 shadow-lg overflow-hidden"
+          className="flex-1 flex flex-col bg-white rounded-2xl border border-rose-200 shadow-lg overflow-hidden max-h-[600px]"
         >
           {/* Messages */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto">
             <Conversation className="h-full">
               <ConversationContent className="space-y-4">
                 {messages.map((message) => (
@@ -159,7 +161,63 @@ export default function LegalChatPage() {
                         className="bg-rose-100"
                       />
                     )}
-                    <MessageContent>{message.content}</MessageContent>
+                    <MessageContent>
+                      <div className="markdown-content">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => (
+                              <p className="mb-2 last:mb-0 leading-relaxed">
+                                {children}
+                              </p>
+                            ),
+                            strong: ({ children }) => (
+                              <strong className="font-bold text-gray-900">
+                                {children}
+                              </strong>
+                            ),
+                            ul: ({ children }) => (
+                              <ul className="list-disc list-inside space-y-1 my-2">
+                                {children}
+                              </ul>
+                            ),
+                            ol: ({ children }) => (
+                              <ol className="list-decimal list-inside space-y-1 my-2">
+                                {children}
+                              </ol>
+                            ),
+                            li: ({ children }) => (
+                              <li className="ml-2">{children}</li>
+                            ),
+                            h1: ({ children }) => (
+                              <h1 className="text-lg font-bold mb-2 mt-1">
+                                {children}
+                              </h1>
+                            ),
+                            h2: ({ children }) => (
+                              <h2 className="text-base font-bold mb-2 mt-1">
+                                {children}
+                              </h2>
+                            ),
+                            h3: ({ children }) => (
+                              <h3 className="text-sm font-semibold mb-1 mt-1">
+                                {children}
+                              </h3>
+                            ),
+                            em: ({ children }) => (
+                              <em className="italic">{children}</em>
+                            ),
+                            code: ({ children }) => (
+                              <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono">
+                                {children}
+                              </code>
+                            ),
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    </MessageContent>
                     {message.role === "user" && (
                       <MessageAvatar
                         src="/api/placeholder/32/32"
@@ -179,7 +237,7 @@ export default function LegalChatPage() {
               <PromptInputTextarea
                 value={input}
                 onChange={(e) => setInput(e.currentTarget.value)}
-                placeholder="Ask me anything about legal documents, contracts, or compliance..."
+                placeholder="Ask me anything about Indian law, legal documents, contracts, or compliance..."
                 className="bg-white"
               />
               <PromptInputToolbar>
