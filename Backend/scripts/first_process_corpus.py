@@ -4,7 +4,7 @@ import fitz  # PyMuPDF
 from docx import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document as LangchainDocument
-# NEW: OCR imports
+# NEW: OCR import
 import pytesseract
 from PIL import Image
 

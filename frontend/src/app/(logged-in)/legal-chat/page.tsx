@@ -14,7 +14,11 @@ import {
   Conversation,
   ConversationContent,
 } from "@/components/ui/shadcn-io/ai/conversation";
-import { Message, MessageContent, MessageAvatar } from "@/components/ui/shadcn-io/ai/message";
+import {
+  Message,
+  MessageContent,
+  MessageAvatar,
+} from "@/components/ui/shadcn-io/ai/message";
 import { Scale, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -30,10 +34,13 @@ export default function LegalChatPage() {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hello! I'm your AI legal assistant. I can help you with legal questions, document drafting guidance, and compliance information. How can I assist you today?",
+      content:
+        "Hello! I'm your AI legal assistant. I can help you with legal questions, document drafting guidance, and compliance information. How can I assist you today?",
     },
   ]);
-  const [status, setStatus] = useState<"ready" | "submitted" | "streaming">("ready");
+  const [status, setStatus] = useState<"ready" | "submitted" | "streaming">(
+    "ready"
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,25 +53,56 @@ export default function LegalChatPage() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
     setInput("");
     setStatus("streaming");
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Call the Gemini API
+      const response = await fetch("/api/legal-chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: currentInput,
+          conversationHistory: messages,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to get response");
+      }
+
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "I'm processing your legal query. In a production environment, this would connect to your backend API to provide detailed legal assistance based on your document corpus and AI models.",
+        content: data.message,
       };
+
       setMessages((prev) => [...prev, assistantMessage]);
       setStatus("ready");
-    }, 1000);
+    } catch (error) {
+      console.error("Error in chat:", error);
+
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content:
+          "I apologize, but I encountered an error processing your request. Please make sure the Gemini API key is configured correctly and try again.",
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+      setStatus("ready");
+    }
   };
 
   return (
     <section className="min-h-screen flex flex-col">
       <BgGradient className="from-rose-500 via-red-500 to-pink-500 opacity-20" />
-      
+
       <MotionDiv
         variants={containerVariants}
         initial="hidden"
@@ -97,7 +135,8 @@ export default function LegalChatPage() {
 
             {/* Subtitle */}
             <p className="text-lg text-gray-600 max-w-2xl">
-              Ask questions about legal documents, contracts, and compliance. Get instant AI-powered guidance.
+              Ask questions about legal documents, contracts, and compliance.
+              Get instant AI-powered guidance.
             </p>
           </div>
         </MotionDiv>
@@ -147,8 +186,8 @@ export default function LegalChatPage() {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <span>Press Enter to send, Shift+Enter for new line</span>
                 </div>
-                <PromptInputSubmit 
-                  disabled={!input.trim()} 
+                <PromptInputSubmit
+                  disabled={!input.trim()}
                   status={status}
                   className="bg-rose-600 hover:bg-rose-700 text-white"
                 />
@@ -164,7 +203,8 @@ export default function LegalChatPage() {
         >
           <p className="flex items-center justify-center gap-2">
             <Scale className="h-4 w-4 text-rose-600" />
-            AI responses are for informational purposes only and do not constitute legal advice
+            AI responses are for informational purposes only and do not
+            constitute legal advice
           </p>
         </MotionDiv>
       </MotionDiv>

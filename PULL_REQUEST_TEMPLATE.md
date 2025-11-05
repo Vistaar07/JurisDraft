@@ -1,1 +1,0 @@
-This pull request merges the backend branch into the main branch.
