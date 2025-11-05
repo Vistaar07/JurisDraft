@@ -21,6 +21,7 @@ export default function Navbar() {
         <NavLink href="/#pricing">Pricing</NavLink>
         <SignedIn>
           <NavLink href="/dashboard">Your Documents</NavLink>
+          <NavLink href="/legal-chat">Legal Chat</NavLink>
         </SignedIn>
       </div>
 
