@@ -17,7 +17,10 @@ export default function Navbar() {
         </NavLink>
       </div>
 
-      <div className="flex lg:justify-center gap-4 lg:gap-12 lg:items-center">
+      <div
+        className="flex lg:justify-center gap-4 lg:gap-12 lg:items-center"
+        suppressHydrationWarning
+      >
         <NavLink href="/#pricing">Pricing</NavLink>
         <SignedIn>
           <NavLink href="/dashboard">Your Documents</NavLink>
@@ -25,14 +28,12 @@ export default function Navbar() {
         </SignedIn>
       </div>
 
-      <div className="flex lg:justify-end lg:flex-1">
+      <div className="flex lg:justify-end lg:flex-1" suppressHydrationWarning>
         <SignedIn>
           <div className="flex gap-2 items-center">
-            <NavLink href="/generate">Generate Document</NavLink>
+            <NavLink href="/upload">Upload Document</NavLink>
             <PlanBadge />
-            <div suppressHydrationWarning>
-              <UserButton />
-            </div>
+            <UserButton />
           </div>
         </SignedIn>
         <SignedOut>

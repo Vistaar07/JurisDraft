@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
     const { message, conversationHistory } = await req.json();
 
     if (!message || typeof message !== "string") {
-      return NextResponse.json(
-        { error: "Message is required and must be a string" },
+      return new Response(
+        JSON.stringify({ error: "Message is required and must be a string" }),
         { status: 400 }
       );
     }
 
     // Check if API key is configured
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json(
-        { error: "Gemini API key is not configured" },
+      return new Response(
+        JSON.stringify({ error: "Gemini API key is not configured" }),
         { status: 500 }
       );
     }
@@ -77,14 +77,33 @@ Current user question: ${message}`;
       fullPrompt = `Previous conversation:\n${historyText}\n\n${systemPrompt}`;
     }
 
-    // Generate content
-    const result = await model.generateContent(fullPrompt);
-    const response = await result.response;
-    const text = response.text();
+    // Create a streaming response
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          // Generate content with streaming
+          const result = await model.generateContentStream(fullPrompt);
 
-    return NextResponse.json({
-      message: text,
-      success: true,
+          // Stream the response chunks
+          for await (const chunk of result.stream) {
+            const text = chunk.text();
+            controller.enqueue(encoder.encode(text));
+          }
+
+          controller.close();
+        } catch (error) {
+          console.error("Error in streaming:", error);
+          controller.error(error);
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+      },
     });
   } catch (error) {
     console.error("Error in chat API:", error);
@@ -93,17 +112,17 @@ Current user question: ${message}`;
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     if (errorMessage.includes("API key")) {
-      return NextResponse.json(
-        { error: "Invalid API key configuration" },
+      return new Response(
+        JSON.stringify({ error: "Invalid API key configuration" }),
         { status: 500 }
       );
     }
 
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         error: "Failed to generate response. Please try again.",
         details: errorMessage,
-      },
+      }),
       { status: 500 }
     );
   }

@@ -2,8 +2,6 @@
 
 import { useState, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
 import { containerVariants, itemsVariants } from "@/utils/constants";
@@ -26,6 +24,7 @@ import {
   Suggestions,
   Suggestion,
 } from "@/components/ui/shadcn-io/ai/suggestion";
+import { Response } from "@/components/ui/shadcn-io/ai/response";
 import { Scale, Sparkles, Bot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -83,8 +82,16 @@ export default function LegalChatPage() {
     setStatus("streaming");
     setIsThinking(true);
 
+    // Create a placeholder message for the streaming response
+    const assistantMessageId = (Date.now() + 1).toString();
+    const assistantMessage: ChatMessage = {
+      id: assistantMessageId,
+      role: "assistant",
+      content: "",
+    };
+
     try {
-      // Call the Gemini API
+      // Call the Gemini API with streaming
       const response = await fetch("/api/legal-chat", {
         method: "POST",
         headers: {
@@ -96,21 +103,49 @@ export default function LegalChatPage() {
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to get response");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to get response");
       }
 
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: data.message,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-      setStatus("ready");
+      // Hide thinking indicator once stream starts
       setIsThinking(false);
+
+      // Add the assistant message placeholder
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      // Read the streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error("No reader available");
+      }
+
+      let accumulatedText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        // Decode the chunk and add to accumulated text
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedText += chunk;
+
+        // Update the assistant message with accumulated text
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessageId
+              ? { ...msg, content: accumulatedText }
+              : msg
+          )
+        );
+      }
+
+      setStatus("ready");
     } catch (error) {
       console.error("Error in chat:", error);
 
@@ -121,7 +156,11 @@ export default function LegalChatPage() {
           "I apologize, but I encountered an error processing your request. Please make sure the Gemini API key is configured correctly and try again.",
       };
 
-      setMessages((prev) => [...prev, errorMessage]);
+      // Remove the placeholder message if it exists and add error message
+      setMessages((prev) => {
+        const filtered = prev.filter((msg) => msg.id !== assistantMessageId);
+        return [...filtered, errorMessage];
+      });
       setStatus("ready");
       setIsThinking(false);
     }
@@ -190,61 +229,12 @@ export default function LegalChatPage() {
                       </MessageAvatar>
                     )}
                     <MessageContent>
-                      <div className="markdown-content">
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            p: ({ children }) => (
-                              <p className="mb-2 last:mb-0 leading-relaxed">
-                                {children}
-                              </p>
-                            ),
-                            strong: ({ children }) => (
-                              <strong className="font-bold text-gray-900">
-                                {children}
-                              </strong>
-                            ),
-                            ul: ({ children }) => (
-                              <ul className="list-disc list-inside space-y-1 my-2">
-                                {children}
-                              </ul>
-                            ),
-                            ol: ({ children }) => (
-                              <ol className="list-decimal list-inside space-y-1 my-2">
-                                {children}
-                              </ol>
-                            ),
-                            li: ({ children }) => (
-                              <li className="ml-2">{children}</li>
-                            ),
-                            h1: ({ children }) => (
-                              <h1 className="text-lg font-bold mb-2 mt-1">
-                                {children}
-                              </h1>
-                            ),
-                            h2: ({ children }) => (
-                              <h2 className="text-base font-bold mb-2 mt-1">
-                                {children}
-                              </h2>
-                            ),
-                            h3: ({ children }) => (
-                              <h3 className="text-sm font-semibold mb-1 mt-1">
-                                {children}
-                              </h3>
-                            ),
-                            em: ({ children }) => (
-                              <em className="italic">{children}</em>
-                            ),
-                            code: ({ children }) => (
-                              <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono">
-                                {children}
-                              </code>
-                            ),
-                          }}
-                        >
-                          {message.content}
-                        </ReactMarkdown>
-                      </div>
+                      <Response
+                        className="text-gray-800 leading-relaxed"
+                        parseIncompleteMarkdown={true}
+                      >
+                        {message.content}
+                      </Response>
                     </MessageContent>
                     {message.role === "user" && (
                       <MessageAvatar
