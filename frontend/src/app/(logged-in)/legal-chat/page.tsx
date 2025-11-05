@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import BgGradient from "@/components/common/bg-gradient";
@@ -21,7 +22,11 @@ import {
   MessageContent,
   MessageAvatar,
 } from "@/components/ui/shadcn-io/ai/message";
-import { Scale, Sparkles } from "lucide-react";
+import {
+  Suggestions,
+  Suggestion,
+} from "@/components/ui/shadcn-io/ai/suggestion";
+import { Scale, Sparkles, Bot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface ChatMessage {
@@ -30,7 +35,17 @@ interface ChatMessage {
   content: string;
 }
 
+const SAMPLE_QUESTIONS = [
+  "What is Section 420 of IPC?",
+  "Explain the Indian Contract Act 1872",
+  "What is a power of attorney in India?",
+  "Tell me about GST compliance requirements",
+  "What are consumer rights under Indian law?",
+];
+
 export default function LegalChatPage() {
+  const { user } = useUser();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -43,6 +58,14 @@ export default function LegalChatPage() {
   const [status, setStatus] = useState<"ready" | "submitted" | "streaming">(
     "ready"
   );
+  const [isThinking, setIsThinking] = useState(false);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +81,7 @@ export default function LegalChatPage() {
     const currentInput = input;
     setInput("");
     setStatus("streaming");
+    setIsThinking(true);
 
     try {
       // Call the Gemini API
@@ -86,6 +110,7 @@ export default function LegalChatPage() {
 
       setMessages((prev) => [...prev, assistantMessage]);
       setStatus("ready");
+      setIsThinking(false);
     } catch (error) {
       console.error("Error in chat:", error);
 
@@ -98,6 +123,7 @@ export default function LegalChatPage() {
 
       setMessages((prev) => [...prev, errorMessage]);
       setStatus("ready");
+      setIsThinking(false);
     }
   };
 
@@ -159,7 +185,9 @@ export default function LegalChatPage() {
                         src="/api/placeholder/32/32"
                         name="AI"
                         className="bg-rose-100"
-                      />
+                      >
+                        <Bot className="h-4 w-4 text-rose-600" />
+                      </MessageAvatar>
                     )}
                     <MessageContent>
                       <div className="markdown-content">
@@ -220,23 +248,60 @@ export default function LegalChatPage() {
                     </MessageContent>
                     {message.role === "user" && (
                       <MessageAvatar
-                        src="/api/placeholder/32/32"
-                        name="You"
+                        src={user?.imageUrl || "/api/placeholder/32/32"}
+                        name={user?.firstName || user?.username || "You"}
                         className="bg-gray-100"
                       />
                     )}
                   </Message>
                 ))}
+
+                {/* Reasoning Indicator */}
+                {isThinking && (
+                  <div className="flex items-start gap-3">
+                    <MessageAvatar
+                      src="/api/placeholder/32/32"
+                      name="AI"
+                      className="bg-rose-100"
+                    >
+                      <Bot className="h-4 w-4 text-rose-600 animate-pulse" />
+                    </MessageAvatar>
+                    <div className="bg-gray-100 rounded-lg px-4 py-3 max-w-[75%]">
+                      <div className="text-sm text-gray-600 animate-pulse">
+                        Analyzing your question about Indian law...
+                      </div>
+                    </div>
+                  </div>
+                )}
               </ConversationContent>
             </Conversation>
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-rose-100 p-4 bg-rose-50/30">
+          <div className="border-t border-rose-100 p-4 bg-rose-50/30 space-y-3">
+            {/* Suggestion Chips */}
+            {messages.length === 1 && (
+              <Suggestions className="flex flex-wrap gap-2">
+                {SAMPLE_QUESTIONS.map((question, index) => (
+                  <Suggestion
+                    key={index}
+                    suggestion={question}
+                    onClick={handleSuggestionClick}
+                    className="bg-white hover:bg-rose-50 border-rose-200 text-gray-700 hover:text-rose-700 text-sm"
+                  >
+                    {question}
+                  </Suggestion>
+                ))}
+              </Suggestions>
+            )}
+
             <PromptInput onSubmit={handleSubmit}>
               <PromptInputTextarea
+                ref={inputRef}
                 value={input}
-                onChange={(e) => setInput(e.currentTarget.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setInput(e.currentTarget.value)
+                }
                 placeholder="Ask me anything about Indian law, legal documents, contracts, or compliance..."
                 className="bg-white"
               />
