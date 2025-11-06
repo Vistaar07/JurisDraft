@@ -5,9 +5,15 @@ from pydantic import BaseModel
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
-from langchain.schema.runnable import RunnablePassthrough
-from langchain.schema.output_parser import StrOutputParser
+# Support both LangChain >=0.2 (langchain_core) and older structure as fallback
+try:
+    from langchain_core.prompts import PromptTemplate
+    from langchain_core.runnables import RunnablePassthrough
+    from langchain_core.output_parsers import StrOutputParser
+except ImportError:
+    from langchain.prompts import PromptTemplate  # type: ignore
+    from langchain.schema.runnable import RunnablePassthrough  # type: ignore
+    from langchain.schema.output_parser import StrOutputParser  # type: ignore
 
 # Initialize FastAPI App
 app = FastAPI(
@@ -22,18 +28,21 @@ print("Loading models and comprehensive vector store...")
 # Load the local embedding model (must be the same one used to create the index)
 model_name = "sentence-transformers/all-MiniLM-L6-v2"
 model_kwargs = {'device': 'cpu'}
-embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs=model_kwargs)
+embeddings = HuggingFaceEmbeddings(
+    model_name=model_name, model_kwargs=model_kwargs)
 
 # Load the FAISS index from the local directory
-FAISS_INDEX_PATH = "faiss_index_22_OCT"
-db = FAISS.load_local(FAISS_INDEX_PATH, embeddings, allow_dangerous_deserialization=True)
-retriever = db.as_retriever(search_kwargs={'k': 7}) # Retrieve 7 relevant chunks for more context
+FAISS_INDEX_PATH = r"C:\Users\Ammar\OneDrive\Documents\MCA - MPSTME\Semester 3\CP\JurisDraft\backend\models\faiss_acts"
+db = FAISS.load_local(FAISS_INDEX_PATH, embeddings,
+                      allow_dangerous_deserialization=True)
+# Retrieve 7 relevant chunks for more context
+retriever = db.as_retriever(search_kwargs={'k': 7})
 
 # Initialize the Gemini Pro LLM for generation
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-pro",
     google_api_key=os.environ.get("GOOGLE_API_KEY"),
-    temperature=0.4, # Slightly higher temperature for more nuanced analysis
+    temperature=0.4,  # Slightly higher temperature for more nuanced analysis
     convert_system_message_to_human=True
 )
 
@@ -58,8 +67,11 @@ DETAILED ANALYSIS:
 prompt = PromptTemplate.from_template(analysis_template)
 
 # --- Define the Request Body Model ---
+
+
 class QueryRequest(BaseModel):
     query: str
+
 
 # --- Build the RAG Chain ---
 rag_chain = (
@@ -70,6 +82,8 @@ rag_chain = (
 )
 
 # --- Create the API Endpoint ---
+
+
 @app.post("/api/v1/analyze")
 def analyze_query(request: QueryRequest):
     """
@@ -79,9 +93,11 @@ def analyze_query(request: QueryRequest):
     result = rag_chain.invoke(request.query)
     return {"query": request.query, "analysis": result}
 
+
 @app.get("/")
 def read_root():
     return {"status": "Legal AI Analyst API is running"}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

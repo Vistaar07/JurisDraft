@@ -3,7 +3,6 @@
 langchain
 langchain-community
 langchain-core
-langchain-google-genai
 langchain-huggingface
 langchain-text-splitters
 
@@ -19,7 +18,7 @@ pydantic
 # faiss-cpu is the vector store (CPU-version is fine on Mac/Windows without CUDA)
 # torch is a dependency for sentence-transformers and used explicitly in scripts
 sentence-transformers
-# faiss-cpu
+faiss-cpu
 torch
 
 # --- Document Processing Libraries ---
@@ -40,4 +39,4 @@ tqdm           # For progress bars in data processing scripts
 rouge-score    # For ROUGE metrics in evaluation
 rapidfuzz      # For fuzzy mapping case_name -> source
 pandas         # For result tables and CSV export
-google-generativeai  # For optional Gemini LLM evaluation
+google-generativeai>=0.9.0  # For optional Gemini LLM evaluation; align with google-ai-generativelanguage>=0.9
