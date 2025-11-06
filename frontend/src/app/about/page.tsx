@@ -172,7 +172,7 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full">
       {/* Hero Section */}
       <MotionSection
         variants={containerVariants}
