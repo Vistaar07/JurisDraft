@@ -169,6 +169,7 @@ class ComplianceChecker:
         self.config = rag_config
         self.llm = rag_config.llm
         self.vectorstore_acts = rag_config.vectorstore_acts
+        self.vectorstore_judgments = rag_config.vectorstore_judgments  # use judgments too
         self.checklists = rag_config.checklists
 
     def check_document(
@@ -373,26 +374,41 @@ DO NOT include any text before or after the JSON object.
         description: str,
         governing_acts: List[str]
     ) -> str:
-        """Retrieve relevant legal provisions from FAISS"""
-
-        if not self.vectorstore_acts:
+        """Retrieve relevant statutory provisions and supporting case law from FAISS"""
+        has_acts = self.vectorstore_acts is not None
+        has_judg = self.vectorstore_judgments is not None
+        if not has_acts and not has_judg:
             return "Vector store not available"
-
+        sections: List[str] = []
+        # Statutory provisions
         try:
-            # Search query combining topic and acts
-            query = f"{topic} {description} {' '.join(governing_acts)}"
-            results = self.vectorstore_acts.similarity_search(query, k=3)
-
-            context = "\n\n".join([
-                f"[{doc.metadata.get('source', 'Legal Act')}]\n{doc.page_content[:500]}"
-                for doc in results
-            ])
-
-            return context if context else "No specific provisions found"
-
+            if has_acts:
+                acts_query = f"{topic} {description} {' '.join(governing_acts)}"
+                acts_results = self.vectorstore_acts.similarity_search(acts_query, k=3)
+                acts_context = "\n\n".join([
+                    f"[{doc.metadata.get('source', 'Legal Act')}]\n{doc.page_content[:500]}"
+                    for doc in acts_results
+                ])
+                if acts_context:
+                    sections.append("=== Statutory Provisions ===\n" + acts_context)
         except Exception as e:
-            print(f"Error retrieving legal context: {e}")
-            return "Legal context retrieval failed"
+            print(f"Error retrieving Acts for context: {e}")
+        # Case law
+        try:
+            if has_judg:
+                judg_query = f"{topic} {description} case law India {' '.join(governing_acts)}"
+                judg_results = self.vectorstore_judgments.similarity_search(judg_query, k=3)
+                judg_blocks: List[str] = []
+                for i, doc in enumerate(judg_results, 1):
+                    title = doc.metadata.get("case_name") or doc.metadata.get("title") or doc.metadata.get("source", "Judgment")
+                    citation = doc.metadata.get("citation") or doc.metadata.get("year") or ""
+                    header = f"CASE {i} [{title}{(' - ' + citation) if citation else ''}]"
+                    judg_blocks.append(f"{header}\n{doc.page_content[:500]}")
+                if judg_blocks:
+                    sections.append("=== Case Law ===\n" + "\n\n".join(judg_blocks))
+        except Exception as e:
+            print(f"Error retrieving Judgments for context: {e}")
+        return "\n\n".join(sections) if sections else "No specific provisions found"
 
     def _calculate_risk_score(
         self,
@@ -491,6 +507,7 @@ class DocumentGenerator:
         self.config = rag_config
         self.llm = rag_config.llm
         self.vectorstore_acts = rag_config.vectorstore_acts
+        self.vectorstore_judgments = rag_config.vectorstore_judgments  # use judgments too
         self.checklists = rag_config.checklists
 
     def generate_document(
@@ -558,26 +575,37 @@ class DocumentGenerator:
         checklist_items: List[Dict],
         governing_acts: List[str]
     ) -> str:
-        """Retrieve relevant legal provisions from FAISS"""
-
-        if not self.vectorstore_acts:
+        """Retrieve relevant statutory provisions (Acts) and case law (Judgments)"""
+        has_acts = self.vectorstore_acts is not None
+        has_judg = self.vectorstore_judgments is not None
+        if not has_acts and not has_judg:
             return "Legal provisions database not available."
-
         try:
-            # Build comprehensive query from checklist topics
+            sections: List[str] = []
             topics = [item.get("topic", "") for item in checklist_items]
-            query = f"{document_type} {' '.join(topics[:5])} {' '.join(governing_acts)}"
-
-            # Retrieve relevant chunks
-            results = self.vectorstore_acts.similarity_search(query, k=5)
-
-            provisions = []
-            for i, doc in enumerate(results, 1):
-                source = doc.metadata.get('source', 'Legal Act')
-                provisions.append(f"PROVISION {i} [{source}]:\n{doc.page_content[:600]}\n")
-
-            return "\n".join(provisions)
-
+            base_query = f"{document_type} {' '.join(topics[:5])} {' '.join(governing_acts)}"
+            # Acts
+            if has_acts:
+                acts_results = self.vectorstore_acts.similarity_search(base_query, k=5)
+                acts_blocks: List[str] = []
+                for i, doc in enumerate(acts_results, 1):
+                    source = doc.metadata.get('source', 'Legal Act')
+                    acts_blocks.append(f"PROVISION {i} [{source}]:\n{doc.page_content[:600]}")
+                if acts_blocks:
+                    sections.append("=== Statutory Provisions ===\n" + "\n\n".join(acts_blocks))
+            # Judgments
+            if has_judg:
+                judg_query = f"{base_query} case law India"
+                judg_results = self.vectorstore_judgments.similarity_search(judg_query, k=3)
+                judg_blocks: List[str] = []
+                for i, doc in enumerate(judg_results, 1):
+                    title = doc.metadata.get("case_name") or doc.metadata.get("title") or doc.metadata.get("source", "Judgment")
+                    citation = doc.metadata.get("citation") or doc.metadata.get("year") or ""
+                    header = f"CASE {i} [{title}{(' - ' + citation) if citation else ''}]"
+                    judg_blocks.append(f"{header}:\n{doc.page_content[:600]}")
+                if judg_blocks:
+                    sections.append("=== Case Law ===\n" + "\n\n".join(judg_blocks))
+            return "\n\n".join(sections) if sections else f"Provisions from: {', '.join(governing_acts)}"
         except Exception as e:
             print(f"Error retrieving legal provisions: {e}")
             return f"Provisions from: {', '.join(governing_acts)}"
@@ -648,7 +676,7 @@ Draft a comprehensive, legally sound {document_name} strictly under Indian law.
 === GOVERNING LEGISLATION (India) ===
 {chr(10).join(f'• {act}' for act in governing_acts)}
 
-=== RELEVANT STATUTORY PROVISIONS (retrieved) ===
+=== RELEVANT AUTHORITY (Acts + Case Law, retrieved) ===
 {legal_context[:3500]}
 
 === MANDATORY REQUIREMENTS (Checklist - all must be addressed) ===
