@@ -136,7 +136,7 @@ export default function HeroSection() {
         hover:to-slate-900 font-bold hover:no-underline shadow-lg 
         hover:shadow-xl transition-all duration-300 group"
           >
-            <Link href="/generate" className="flex gap-3 items-center">
+            <Link href="/upload" className="flex gap-3 items-center">
               <span>Start Drafting Now</span>
               <ArrowRight className="group-hover:translate-x-1 transition-transform duration-200" />
             </Link>

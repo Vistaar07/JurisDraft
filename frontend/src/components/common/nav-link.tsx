@@ -13,6 +13,8 @@ export default function NavLink({
   className?: string;
 }) {
   const pathname = usePathname();
+
+  // Calculate active state - pathname is already client-side safe from Next.js
   const isActive =
     pathname === href || (href !== "/" && pathname.startsWith(href));
 
@@ -24,7 +26,6 @@ export default function NavLink({
         className,
         isActive && "text-rose-500"
       )}
-      suppressHydrationWarning
     >
       {children}
     </Link>

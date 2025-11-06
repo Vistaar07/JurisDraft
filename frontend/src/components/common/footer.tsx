@@ -102,6 +102,24 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="/about"
+                  className="flex items-center gap-2 text-gray-600 hover:text-rose-600 transition-colors group"
+                >
+                  <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  <span>About Us</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="flex items-center gap-2 text-gray-600 hover:text-rose-600 transition-colors group"
+                >
+                  <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                  <span>Contact</span>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/#pricing"
                   className="flex items-center gap-2 text-gray-600 hover:text-rose-600 transition-colors group"
                 >
