@@ -88,7 +88,8 @@ class RAGConfig:
 
         # Initialize embeddings and LLM
         # Use the exact embedding model used to build FAISS: 'mixedbread-ai/mxbai-embed-large-v1'
-        self.embeddings = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1")
+        self.embeddings = HuggingFaceEmbeddings(
+            model_name="mixedbread-ai/mxbai-embed-large-v1")
 
         # LLM: Gemini 2.5 Pro
         self.llm = ChatGoogleGenerativeAI(
@@ -150,7 +151,8 @@ class RAGConfig:
             if checklist_file.exists():
                 with open(checklist_file, 'r') as f:
                     checklists = json.load(f)
-                print(f"✓ Loaded checklists for {len(checklists)} document types")
+                print(
+                    f"✓ Loaded checklists for {len(checklists)} document types")
 
         except Exception as e:
             print(f"Warning: Could not load checklists: {e}")
@@ -195,12 +197,14 @@ class ComplianceChecker:
         checklist_data = self.checklists.get(doc_type_key, {})
 
         if not checklist_data:
-            raise ValueError(f"No checklist found for document type: {document_type}")
+            raise ValueError(
+                f"No checklist found for document type: {document_type}")
 
         checklist_items = checklist_data.get("checklist_items", [])
         governing_acts = checklist_data.get("governing_acts", [])
 
-        print(f"Checking {document_type} with {len(checklist_items)} checklist items...")
+        print(
+            f"Checking {document_type} with {len(checklist_items)} checklist items...")
 
         compliance_checks: List[ComplianceItem] = []
         loopholes: List[LoopholeItem] = []
@@ -214,9 +218,11 @@ class ComplianceChecker:
             )
 
             if check_result["type"] == "compliance":
-                compliance_checks.append(check_result["item"])  # type: ignore[arg-type]
+                # type: ignore[arg-type]
+                compliance_checks.append(check_result["item"])
             else:
-                loopholes.append(check_result["item"])  # type: ignore[arg-type]
+                # type: ignore[arg-type]
+                loopholes.append(check_result["item"])
 
         # Calculate risk score
         risk_score = self._calculate_risk_score(compliance_checks, loopholes)
@@ -260,7 +266,8 @@ class ComplianceChecker:
         description = checklist_item.get("description", "")
         risk_level = checklist_item.get("risk_level", "Medium")
 
-        legal_context = self._get_legal_context(topic, description, governing_acts)
+        legal_context = self._get_legal_context(
+            topic, description, governing_acts)
 
         prompt = f"""You are an expert legal analyst specializing in Indian law, specifically in reviewing {document_type} documents.
 
@@ -314,10 +321,13 @@ DO NOT include any text before or after the JSON object.
                             "type": "loophole",
                             "item": LoopholeItem(
                                 title=topic,
-                                description=result.get("explanation", description),
+                                description=result.get(
+                                    "explanation", description),
                                 risk_level=risk_level,
-                                clause_reference=result.get("clause_reference", "Not specified"),
-                                recommendation=result.get("recommendation", "Review and revise")
+                                clause_reference=result.get(
+                                    "clause_reference", "Not specified"),
+                                recommendation=result.get(
+                                    "recommendation", "Review and revise")
                             )
                         }
                     else:
@@ -328,7 +338,8 @@ DO NOT include any text before or after the JSON object.
                                 status="Non-Compliant",
                                 details=result.get("explanation", description),
                                 relevant_acts=governing_acts,
-                                remediation=result.get("recommendation", "Add missing clause")
+                                remediation=result.get(
+                                    "recommendation", "Add missing clause")
                             )
                         }
                 else:
@@ -337,7 +348,8 @@ DO NOT include any text before or after the JSON object.
                         "item": ComplianceItem(
                             requirement=topic,
                             status="Compliant",
-                            details=result.get("explanation", "Requirement met"),
+                            details=result.get(
+                                "explanation", "Requirement met"),
                             relevant_acts=governing_acts,
                             remediation=None
                         )
@@ -384,28 +396,34 @@ DO NOT include any text before or after the JSON object.
         try:
             if has_acts:
                 acts_query = f"{topic} {description} {' '.join(governing_acts)}"
-                acts_results = self.vectorstore_acts.similarity_search(acts_query, k=3)
+                acts_results = self.vectorstore_acts.similarity_search(
+                    acts_query, k=3)
                 acts_context = "\n\n".join([
                     f"[{doc.metadata.get('source', 'Legal Act')}]\n{doc.page_content[:500]}"
                     for doc in acts_results
                 ])
                 if acts_context:
-                    sections.append("=== Statutory Provisions ===\n" + acts_context)
+                    sections.append(
+                        "=== Statutory Provisions ===\n" + acts_context)
         except Exception as e:
             print(f"Error retrieving Acts for context: {e}")
         # Case law
         try:
             if has_judg:
                 judg_query = f"{topic} {description} case law India {' '.join(governing_acts)}"
-                judg_results = self.vectorstore_judgments.similarity_search(judg_query, k=3)
+                judg_results = self.vectorstore_judgments.similarity_search(
+                    judg_query, k=3)
                 judg_blocks: List[str] = []
                 for i, doc in enumerate(judg_results, 1):
-                    title = doc.metadata.get("case_name") or doc.metadata.get("title") or doc.metadata.get("source", "Judgment")
-                    citation = doc.metadata.get("citation") or doc.metadata.get("year") or ""
+                    title = doc.metadata.get("case_name") or doc.metadata.get(
+                        "title") or doc.metadata.get("source", "Judgment")
+                    citation = doc.metadata.get(
+                        "citation") or doc.metadata.get("year") or ""
                     header = f"CASE {i} [{title}{(' - ' + citation) if citation else ''}]"
                     judg_blocks.append(f"{header}\n{doc.page_content[:500]}")
                 if judg_blocks:
-                    sections.append("=== Case Law ===\n" + "\n\n".join(judg_blocks))
+                    sections.append("=== Case Law ===\n" +
+                                    "\n\n".join(judg_blocks))
         except Exception as e:
             print(f"Error retrieving Judgments for context: {e}")
         return "\n\n".join(sections) if sections else "No specific provisions found"
@@ -452,8 +470,10 @@ DO NOT include any text before or after the JSON object.
     ) -> str:
         """Generate analysis summary"""
 
-        non_compliant = len([c for c in compliance_checks if c.status == "Non-Compliant"])
-        high_risk_loopholes = len([l for l in loopholes if l.risk_level == "High"])
+        non_compliant = len(
+            [c for c in compliance_checks if c.status == "Non-Compliant"])
+        high_risk_loopholes = len(
+            [l for l in loopholes if l.risk_level == "High"])
 
         summary = f"""Compliance Analysis - {document_type.replace('_', ' ').title()}
 
@@ -481,17 +501,20 @@ Findings:
         # High-risk loopholes first
         for loophole in loopholes:
             if loophole.risk_level == "High":
-                recommendations.append(f"[High] {loophole.title}: {loophole.recommendation}")
+                recommendations.append(
+                    f"[High] {loophole.title}: {loophole.recommendation}")
 
         # Non-compliant items
         for check in compliance_checks:
             if check.status == "Non-Compliant" and check.remediation:
-                recommendations.append(f"[Compliance] {check.requirement}: {check.remediation}")
+                recommendations.append(
+                    f"[Compliance] {check.requirement}: {check.remediation}")
 
         # Medium-risk loopholes
         for loophole in loopholes:
             if loophole.risk_level == "Medium":
-                recommendations.append(f"[Medium] {loophole.title}: {loophole.recommendation}")
+                recommendations.append(
+                    f"[Medium] {loophole.title}: {loophole.recommendation}")
 
         return recommendations[:10]  # Top 10 recommendations
 
@@ -532,7 +555,8 @@ class DocumentGenerator:
 
         # Enforce Indian legal domain
         if jurisdiction.strip().lower() != "india":
-            raise ValueError("Only Indian legal domain is supported. Set jurisdiction='India'.")
+            raise ValueError(
+                "Only Indian legal domain is supported. Set jurisdiction='India'.")
 
         # Normalize output format
         fmt = output_format.lower()
@@ -543,12 +567,14 @@ class DocumentGenerator:
         doc_type_key = document_type.lower().replace(" ", "_")
         checklist_data = self.checklists.get(doc_type_key, {})
         if not checklist_data:
-            raise ValueError(f"No checklist found for document type: {document_type}")
+            raise ValueError(
+                f"No checklist found for document type: {document_type}")
         display_name = checklist_data.get("display_name", document_type)
         checklist_items = checklist_data.get("checklist_items", [])
         governing_acts = checklist_data.get("governing_acts", [])
 
-        print(f"Generating {display_name} with {len(checklist_items)} checklist requirements...")
+        print(
+            f"Generating {display_name} with {len(checklist_items)} checklist requirements...")
         legal_context = self._retrieve_legal_provisions(
             document_type,
             checklist_items,
@@ -586,25 +612,32 @@ class DocumentGenerator:
             base_query = f"{document_type} {' '.join(topics[:5])} {' '.join(governing_acts)}"
             # Acts
             if has_acts:
-                acts_results = self.vectorstore_acts.similarity_search(base_query, k=5)
+                acts_results = self.vectorstore_acts.similarity_search(
+                    base_query, k=5)
                 acts_blocks: List[str] = []
                 for i, doc in enumerate(acts_results, 1):
                     source = doc.metadata.get('source', 'Legal Act')
-                    acts_blocks.append(f"PROVISION {i} [{source}]:\n{doc.page_content[:600]}")
+                    acts_blocks.append(
+                        f"PROVISION {i} [{source}]:\n{doc.page_content[:600]}")
                 if acts_blocks:
-                    sections.append("=== Statutory Provisions ===\n" + "\n\n".join(acts_blocks))
+                    sections.append(
+                        "=== Statutory Provisions ===\n" + "\n\n".join(acts_blocks))
             # Judgments
             if has_judg:
                 judg_query = f"{base_query} case law India"
-                judg_results = self.vectorstore_judgments.similarity_search(judg_query, k=3)
+                judg_results = self.vectorstore_judgments.similarity_search(
+                    judg_query, k=3)
                 judg_blocks: List[str] = []
                 for i, doc in enumerate(judg_results, 1):
-                    title = doc.metadata.get("case_name") or doc.metadata.get("title") or doc.metadata.get("source", "Judgment")
-                    citation = doc.metadata.get("citation") or doc.metadata.get("year") or ""
+                    title = doc.metadata.get("case_name") or doc.metadata.get(
+                        "title") or doc.metadata.get("source", "Judgment")
+                    citation = doc.metadata.get(
+                        "citation") or doc.metadata.get("year") or ""
                     header = f"CASE {i} [{title}{(' - ' + citation) if citation else ''}]"
                     judg_blocks.append(f"{header}:\n{doc.page_content[:600]}")
                 if judg_blocks:
-                    sections.append("=== Case Law ===\n" + "\n\n".join(judg_blocks))
+                    sections.append("=== Case Law ===\n" +
+                                    "\n\n".join(judg_blocks))
             return "\n\n".join(sections) if sections else f"Provisions from: {', '.join(governing_acts)}"
         except Exception as e:
             print(f"Error retrieving legal provisions: {e}")
@@ -618,7 +651,8 @@ class DocumentGenerator:
             topic = item.get("topic", "")
             description = item.get("description", "")
             risk_level = item.get("risk_level", "")
-            requirements.append(f"{i}. {topic} [{risk_level}]\n   {description}")
+            requirements.append(
+                f"{i}. {topic} [{risk_level}]\n   {description}")
 
         return "\n\n".join(requirements)
 
@@ -696,6 +730,7 @@ Draft a comprehensive, legally sound {document_name} strictly under Indian law.
 8. Add Recitals (WHEREAS) contextualizing the arrangement.
 9. Include Dispute Resolution (Arbitration under Arbitration and Conciliation Act, 1996 unless a court forum is specified) and Governing Law/Jurisdiction within India.
 10. Include Execution/Signatures with place and date within India.
+11. EXTREMELY IMPORTANT: DO NOT START THE RESPONSE WITH AN EXTRA SENTENCE DESCRIBING WHO YOU ARE OR WHAT YOU ARE DOING. YOU MUST DIRECTLY START WITH THE TITLE OF THE DOCUMENT. 
 
 === REQUIRED STRUCTURE ===
 - Title
