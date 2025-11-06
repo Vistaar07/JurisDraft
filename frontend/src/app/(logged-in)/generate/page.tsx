@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/shadcn-io/ai/prompt-input";
 import { containerVariants, itemsVariants } from "@/utils/constants";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, SquareArrowUpRight } from "lucide-react";
+import { Sparkles, SquareArrowUpRight, Loader2 } from "lucide-react";
 
 interface GenerateResponseMeta {
   success: boolean;
@@ -216,9 +216,10 @@ export default function GeneratePage() {
                       : undefined
                   }
                   variant="default"
+                  disabled={status === "submitted"}
                 >
                   {status === "submitted" ? (
-                    "Generating..."
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <SquareArrowUpRight className="h-4 w-4" />
                   )}
