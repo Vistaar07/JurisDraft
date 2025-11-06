@@ -29,7 +29,7 @@ except Exception:
 
 from docx import Document as DocxDocument
 
-from rag_config import create_compliance_checker
+from .rag_config import create_compliance_checker
 
 app = FastAPI(
     title="JurisDraft Compliance API",

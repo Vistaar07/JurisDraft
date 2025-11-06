@@ -11,7 +11,7 @@ from typing import Dict, Any, List
 import traceback
 
 # Import document generator
-from rag_config import create_document_generator
+from .rag_config import create_document_generator
 
 
 # ============================================================================
@@ -20,11 +20,16 @@ from rag_config import create_document_generator
 
 class DocumentGenerationRequest(BaseModel):
     """Request model for document generation"""
-    document_type: str = Field(description="Type of document (e.g., 'nda', 'offer_letter')")
-    user_inputs: Dict[str, Any] = Field(description="User-provided details for the document")
-    jurisdiction: str = Field(default="India", description="Legal jurisdiction (India only)")
-    output_format: str = Field(default="markdown", description="Output format: markdown | html | text")
-    include_sources: bool = Field(default=True, description="Include References section with sources")
+    document_type: str = Field(
+        description="Type of document (e.g., 'nda', 'offer_letter')")
+    user_inputs: Dict[str, Any] = Field(
+        description="User-provided details for the document")
+    jurisdiction: str = Field(
+        default="India", description="Legal jurisdiction (India only)")
+    output_format: str = Field(
+        default="markdown", description="Output format: markdown | html | text")
+    include_sources: bool = Field(
+        default=True, description="Include References section with sources")
 
     class Config:
         json_schema_extra = {
@@ -166,7 +171,8 @@ async def generate_document(request: DocumentGenerationRequest):
     try:
         # Enforce jurisdiction India
         if request.jurisdiction.strip().lower() != "india":
-            raise HTTPException(status_code=400, detail="Only Indian legal domain is supported. Set jurisdiction='India'.")
+            raise HTTPException(
+                status_code=400, detail="Only Indian legal domain is supported. Set jurisdiction='India'.")
 
         # Validate document type
         doc_type_key = request.document_type.lower().replace(" ", "_")
@@ -186,7 +192,8 @@ async def generate_document(request: DocumentGenerationRequest):
 
         # Validate output format
         if request.output_format not in {"markdown", "html", "text"}:
-            raise HTTPException(status_code=400, detail="Invalid output_format. Use: markdown | html | text")
+            raise HTTPException(
+                status_code=400, detail="Invalid output_format. Use: markdown | html | text")
 
         # Get checklist data
         checklist_data = generator.checklists[doc_type_key]
@@ -206,7 +213,8 @@ async def generate_document(request: DocumentGenerationRequest):
             success=True,
             document_type=request.document_type,
             document_text=document_text,
-            checklist_items_included=len(checklist_data.get("checklist_items", [])),
+            checklist_items_included=len(
+                checklist_data.get("checklist_items", [])),
             governing_acts=checklist_data.get("governing_acts", []),
             metadata={
                 "jurisdiction": request.jurisdiction,
@@ -241,7 +249,8 @@ async def get_document_types():
     - Number of checklist items
     """
     if generator is None:
-        raise HTTPException(status_code=503, detail="Generator not initialized")
+        raise HTTPException(
+            status_code=503, detail="Generator not initialized")
 
     document_types = []
 
@@ -251,7 +260,8 @@ async def get_document_types():
 
         document_types.append(AvailableDocumentType(
             document_type=doc_type,
-            display_name=data.get("display_name", doc_type.replace("_", " ").title()),
+            display_name=data.get(
+                "display_name", doc_type.replace("_", " ").title()),
             governing_acts=data.get("governing_acts", []),
             required_inputs=required_inputs,
             checklist_items_count=len(data.get("checklist_items", []))
@@ -272,7 +282,8 @@ async def get_document_type_details(document_type: str):
     - Suggested input fields
     """
     if generator is None:
-        raise HTTPException(status_code=503, detail="Generator not initialized")
+        raise HTTPException(
+            status_code=503, detail="Generator not initialized")
 
     doc_type_key = document_type.lower().replace(" ", "_")
 
@@ -302,7 +313,8 @@ async def preview_checklist(document_type: str):
     Shows all requirements that the generated document will address
     """
     if generator is None:
-        raise HTTPException(status_code=503, detail="Generator not initialized")
+        raise HTTPException(
+            status_code=503, detail="Generator not initialized")
 
     doc_type_key = document_type.lower().replace(" ", "_")
 
@@ -333,7 +345,8 @@ async def preview_checklist(document_type: str):
 async def get_document_type_schema(document_type: str):
     """Return suggested input schema (fields) for a doc type to guide frontend forms."""
     if generator is None:
-        raise HTTPException(status_code=503, detail="Generator not initialized")
+        raise HTTPException(
+            status_code=503, detail="Generator not initialized")
     key = document_type.lower().replace(" ", "_")
     if key not in generator.checklists:
         raise HTTPException(status_code=404, detail="Document type not found")
@@ -353,7 +366,8 @@ async def template_preview(document_type: str):
     to help the frontend show a preview of structure before actual generation.
     """
     if generator is None:
-        raise HTTPException(status_code=503, detail="Generator not initialized")
+        raise HTTPException(
+            status_code=503, detail="Generator not initialized")
     key = document_type.lower().replace(" ", "_")
     if key not in generator.checklists:
         raise HTTPException(status_code=404, detail="Document type not found")
@@ -453,7 +467,8 @@ if __name__ == "__main__":
     print("  GET  /document-types - List available document types")
     print("  GET  /document-types/{type} - Get document type details")
     print("  POST /preview-checklist - Preview checklist for document type")
-    print("  GET  /document-types/schema/{type} - Get document type input schema")
+    print(
+        "  GET  /document-types/schema/{type} - Get document type input schema")
     print("  POST /template-preview - Get document template preview (headings)")
     print("="*80 + "\n")
 
