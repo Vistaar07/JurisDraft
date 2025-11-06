@@ -3,39 +3,26 @@ langchain
 langchain-community
 langchain-core
 langchain-google-genai
+langchain-huggingface
 spacy
-PyMuPDF
+
+# PDF/DOCX parsing
+pypdf
 python-docx
 regex
  
 # Embedding and Vector Store Libraries
 sentence-transformers
 faiss-cpu
- 
+transformers
+huggingface-hub
+
 # API Server Libraries
 fastapi
 uvicorn[standard]
- 
-# Core LangChain and NLP Libraries
-langchain
-langchain-community
-langchain-core
-langchain-google-genai
-spacy
-PyMuPDF
-python-docx
-regex
- 
-# Embedding and Vector Store Libraries
-sentence-transformers
-faiss-cpu
- 
-# API Server Libraries
-fastapi
-uvicorn[standard]
- 
-# OCR and LangChain splitters (added for OCR and new imports)
+pydantic
+
+# OCR and splitters (optional)
 pytesseract
 pillow
 langchain-text-splitters
-langchain-huggingface
