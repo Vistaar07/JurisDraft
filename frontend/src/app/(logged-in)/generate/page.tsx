@@ -9,9 +9,11 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputSubmit,
+  PromptInputTools,
 } from "@/components/ui/shadcn-io/ai/prompt-input";
-import { containerVariants } from "@/utils/constants";
-// no-op
+import { containerVariants, itemsVariants } from "@/utils/constants";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles, SquareArrowUpRight } from "lucide-react";
 
 interface GenerateResponseMeta {
   success: boolean;
@@ -145,61 +147,85 @@ export default function GeneratePage() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-24 sm:py-32 lg:px-8"
+        className="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8"
       >
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl bg-linear-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
-            Prompt your way to a legal document
-          </h1>
-          <p className="text-muted-foreground max-w-prose mx-auto">
-            Describe the parties, purpose, term, and type of document you want.
-            We&apos;ll structure it and generate a compliant draft.
-          </p>
-        </div>
-
-        <PromptInput
-          className="bg-card border-muted/40"
-          action={async (formData) => {
-            await handleSubmit(formData);
-          }}
-        >
-          <PromptInputTextarea placeholder="e.g. Create an NDA between TechCorp India Pvt. Ltd. (Party A) and John Doe (Party B) for evaluating a potential partnership. Term 3 years." />
-          <PromptInputToolbar>
-            <div className="flex items-center gap-2">
-              {error && (
-                <span className="text-sm text-red-500" role="alert">
-                  {error}
-                </span>
-              )}
-            </div>
-            <PromptInputSubmit
-              status={
-                status === "submitted"
-                  ? "submitted"
-                  : status === "error"
-                  ? "error"
-                  : undefined
-              }
-              variant="default"
+        <div className="flex flex-col items-center justify-center gap-6 text-center">
+          <MotionDiv
+            variants={itemsVariants}
+            className="relative p-[3px] overflow-hidden rounded-full bg-linear-to-r from-rose-200 via-rose-500 to-rose-800 animate-gradient-x group"
+          >
+            <Badge
+              variant={"secondary"}
+              className="relative px-6 py-2 text-base font-medium bg-white rounded-full group-hover:bg-gray-50 transition-colors"
             >
-              {status === "submitted" ? "Generating..." : "Generate"}
-            </PromptInputSubmit>
-          </PromptInputToolbar>
-        </PromptInput>
+              <Sparkles className="h-6 w-6 mr-2 text-rose-600 animate-pulse" />
+              <p className="text-base">AI-Powered Document Generation</p>
+            </Badge>
+          </MotionDiv>
+          <MotionDiv
+            variants={itemsVariants}
+            className="capitalize text-4xl font-bold tracking-light text-gray-900 sm:text-5xl"
+          >
+            Prompt your way to{" "}
+            <span className="relative inline-block">
+              <span className="relative z-10 px-2">a legal document</span>
+              <span
+                className="absolute inset-0 bg-rose-200/50 -rotate-2
+          rounded-lg transform -skey-y-1"
+                aria-hidden="true"
+              ></span>
+            </span>{" "}
+          </MotionDiv>
+          <MotionDiv
+            variants={itemsVariants}
+            className="mt-2 text-lg leading-8 text-gray-600 max-w-2xl text-center"
+          >
+            <p>
+              Describe the parties, purpose, term, and type of document you
+              want. We&apos;ll structure it and generate a compliant draft. ✨
+            </p>
+          </MotionDiv>
 
-        <div className="rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground">
-          <p className="font-medium mb-1">How it works:</p>
-          <ol className="list-decimal list-inside space-y-1">
-            <li>
-              We parse your prompt into structured JSON required by the API.
-            </li>
-            <li>
-              Send it to the backend at <code>/generate</code>.
-            </li>
-            <li>
-              Store the result locally and redirect you to edit the draft.
-            </li>
-          </ol>
+          <PromptInput
+            className="bg-card border-muted/40 w-full max-w-3xl mt-4"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              await handleSubmit(formData);
+            }}
+          >
+            <PromptInputTextarea placeholder="e.g. Create an NDA between TechCorp India Pvt. Ltd. (Party A) and John Doe (Party B) for evaluating a potential partnership. Term 3 years." />
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <span className="text-xs text-muted-foreground font-medium px-2">
+                  RAG Model + Gemini 2.5 Pro
+                </span>
+              </PromptInputTools>
+              <div className="flex items-center gap-2">
+                {error && (
+                  <span className="text-sm text-red-500" role="alert">
+                    {error}
+                  </span>
+                )}
+                <PromptInputSubmit
+                  status={
+                    status === "submitted"
+                      ? "submitted"
+                      : status === "error"
+                      ? "error"
+                      : undefined
+                  }
+                  variant="default"
+                >
+                  {status === "submitted" ? (
+                    "Generating..."
+                  ) : (
+                    <SquareArrowUpRight className="h-4 w-4" />
+                  )}
+                </PromptInputSubmit>
+              </div>
+            </PromptInputToolbar>
+          </PromptInput>
         </div>
       </MotionDiv>
     </section>
