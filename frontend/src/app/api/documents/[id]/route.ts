@@ -26,10 +26,10 @@ async function getOwnedDocument(docId: string, userDbId: string) {
 // Fetches a single document by its ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await auth();
-  const docId = params.id;
+  const { id: docId } = await params;
 
   if (!clerkUserId) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -60,10 +60,10 @@ export async function GET(
 // Updates a single document's text or title
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await auth();
-  const docId = params.id;
+  const { id: docId } = await params;
 
   if (!clerkUserId) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -110,10 +110,10 @@ export async function PUT(
 // Soft-deletes a single document
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await auth();
-  const docId = params.id;
+  const { id: docId } = await params;
 
   if (!clerkUserId) {
     return new NextResponse("Unauthorized", { status: 401 });

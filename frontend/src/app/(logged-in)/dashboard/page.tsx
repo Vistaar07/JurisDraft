@@ -141,7 +141,8 @@ export default function DashboardPage() {
     }
   };
 
-  const truncateText = (text: string, maxLength: number) => {
+  const truncateText = (text: string | undefined | null, maxLength: number) => {
+    if (!text) return "No content available";
     const plainText = text.replace(/<[^>]*>/g, "").replace(/\n/g, " ");
     return plainText.length > maxLength
       ? plainText.substring(0, maxLength) + "..."

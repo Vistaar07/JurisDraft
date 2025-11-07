@@ -93,7 +93,7 @@ class RAGConfig:
 
         # LLM: Gemini 2.5 Pro
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-pro",
+            model="gemini-2.5-flash",
             google_api_key=self.api_keys.get("GOOGLE_API_KEY"),
             temperature=0.3,
             max_output_tokens=8192

@@ -16,10 +16,10 @@ async function getUserDbId(clerkUserId: string) {
 // Fetches a single, detailed compliance report with all its children
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await auth();
-  const reportId = params.id;
+  const { id: reportId } = await params;
 
   if (!clerkUserId) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -72,10 +72,10 @@ export async function GET(
 // Soft-deletes a single compliance report
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId: clerkUserId } = await auth();
-  const reportId = params.id;
+  const { id: reportId } = await params;
 
   if (!clerkUserId) {
     return new NextResponse("Unauthorized", { status: 401 });

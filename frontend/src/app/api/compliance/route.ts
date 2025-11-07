@@ -42,6 +42,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Normalize risk_level to lowercase for database enum compatibility
+    const normalizedRiskLevel = risk_level.toLowerCase();
+
     // Use a transaction to ensure all or nothing is written
     const client = await db.connect();
 
@@ -57,7 +60,7 @@ export async function POST(req: NextRequest) {
           ${userDbId}, ${
         document_id || null
       }, ${document_type}, ${overall_risk_score}, 
-          ${risk_level}, ${summary || ""}
+          ${normalizedRiskLevel}, ${summary || ""}
         )
         RETURNING id;
       `;
@@ -85,14 +88,19 @@ export async function POST(req: NextRequest) {
       // 3. Insert all loopholes
       if (loopholes && loopholes.length > 0) {
         for (const loophole of loopholes) {
+          // Normalize loophole risk_level to lowercase
+          const loopholeRiskLevel = loophole.risk_level
+            ? loophole.risk_level.toLowerCase()
+            : "low";
+
           await client.sql`
             INSERT INTO loopholes (
               compliance_report_id, title, description, risk_level, clause_reference, recommendation
             )
             VALUES (
-              ${reportId}, ${loophole.title}, ${loophole.description}, ${
-            loophole.risk_level
-          },
+              ${reportId}, ${loophole.title}, ${
+            loophole.description
+          }, ${loopholeRiskLevel},
               ${loophole.clause_reference || null}, ${
             loophole.recommendation || null
           }
@@ -104,6 +112,14 @@ export async function POST(req: NextRequest) {
       // 4. Insert all recommendations
       if (recommendations && recommendations.length > 0) {
         for (const rec of recommendations) {
+          // Skip recommendations with null or empty text
+          if (
+            !rec.recommendation_text ||
+            rec.recommendation_text.trim() === ""
+          ) {
+            continue;
+          }
+
           await client.sql`
             INSERT INTO recommendations (
               compliance_report_id, recommendation_text, priority
