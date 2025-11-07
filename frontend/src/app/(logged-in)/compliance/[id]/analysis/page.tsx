@@ -19,7 +19,7 @@ import {
   AlertCircle,
   ArrowLeft,
   Loader2,
-  Save,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
@@ -44,7 +44,8 @@ type ComplianceItem = {
 
 type ComplianceData = {
   id: string;
-  success: boolean;
+  user_id: string;
+  document_id?: string;
   document_type: string;
   compliance_checks: ComplianceItem[];
   loopholes: LoopholeItem[];
@@ -52,46 +53,53 @@ type ComplianceData = {
   risk_level: string;
   summary: string;
   recommendations: string[];
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export default function ComplianceAnalysisPage() {
   const params = useParams();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const id = params.id as string;
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [complianceData, setComplianceData] = useState<ComplianceData | null>(
     null
   );
   const [exportingPDF, setExportingPDF] = useState(false);
   const [exportingDOCX, setExportingDOCX] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!id) return;
 
-    try {
-      const complianceId = params.id as string;
-      const raw = localStorage.getItem(`jurisdraft_compliance_${complianceId}`);
+    const fetchReport = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/compliance/${id}`);
 
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setComplianceData(parsed);
+        if (response.status === 404) {
+          throw new Error("Compliance report not found.");
+        }
 
-        // Check if already saved to dashboard
-        const savedIds = JSON.parse(
-          localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
+        if (!response.ok) {
+          throw new Error("Failed to fetch compliance report");
+        }
+
+        const data = await response.json();
+        setComplianceData(data);
+      } catch (e) {
+        console.error("Failed to load compliance report", e);
+        setError(
+          e instanceof Error ? e.message : "Failed to load compliance report"
         );
-        setIsSaved(savedIds.includes(complianceId));
-      } else {
-        router.push("/upload");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error("Failed to load compliance data", e);
-      router.push("/upload");
-    } finally {
-      setLoading(false);
-    }
-  }, [params.id, router]);
+    };
+
+    fetchReport();
+  }, [id]);
 
   const getRiskBadgeColor = (riskLevel: string) => {
     const level = riskLevel.toLowerCase();
@@ -108,42 +116,39 @@ export default function ComplianceAnalysisPage() {
     return <CheckCircle2 className="h-5 w-5" />;
   };
 
-  const saveToDashboard = () => {
-    if (!complianceData) return;
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this compliance report? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
 
     try {
-      const complianceId = params.id as string;
+      const response = await fetch(`/api/compliance/${id}`, {
+        method: "DELETE",
+      });
 
-      // Get existing saved compliance reports
-      const savedIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
-      );
-
-      // Add this report if not already saved
-      if (!savedIds.includes(complianceId)) {
-        savedIds.push(complianceId);
-        localStorage.setItem(
-          "jurisdraft_saved_compliance_dashboard",
-          JSON.stringify(savedIds)
-        );
-        setIsSaved(true);
-
-        toast("Report Saved!", {
-          description: "Compliance report has been saved to your dashboard",
-          icon: "✅",
-          duration: 3000,
-        });
-      } else {
-        toast("Already Saved", {
-          description: "This report is already in your dashboard",
-          icon: "ℹ️",
-          duration: 3000,
-        });
+      if (!response.ok) {
+        throw new Error("Failed to delete compliance report");
       }
+
+      toast("Report Deleted", {
+        description: "Compliance report has been deleted successfully",
+        icon: "✅",
+        duration: 2000,
+      });
+
+      // On success, redirect to the dashboard
+      router.push("/dashboard");
     } catch (error) {
-      console.error("Error saving to dashboard:", error);
+      console.error("Failed to delete compliance report:", error);
       toast("Error", {
-        description: "Failed to save report. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete report. Please try again.",
         icon: "❌",
         duration: 3000,
       });
@@ -181,7 +186,7 @@ export default function ComplianceAnalysisPage() {
 
       // Date
       pdf.text(
-        `Generated: ${new Date(complianceData.createdAt).toLocaleString()}`,
+        `Generated: ${new Date(complianceData.created_at).toLocaleString()}`,
         margin,
         yPosition
       );
@@ -369,7 +374,7 @@ export default function ComplianceAnalysisPage() {
               }),
               new Paragraph({
                 text: `Generated: ${new Date(
-                  complianceData.createdAt
+                  complianceData.created_at
                 ).toLocaleString()}`,
                 spacing: { after: 200 },
               }),
@@ -509,10 +514,36 @@ export default function ComplianceAnalysisPage() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-rose-600" />
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-rose-600 mx-auto mb-4" />
+          <p className="text-gray-500 text-lg">Loading compliance report...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="min-h-screen flex items-center justify-center">
+        <Card className="max-w-md p-8 text-center">
+          <AlertTriangle className="h-16 w-16 text-red-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2 text-red-500">{error}</h2>
+          <p className="text-gray-600 mb-4">
+            The compliance report could not be loaded.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={() => router.push("/upload")} variant="outline">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Upload
+            </Button>
+            <Button onClick={() => router.push("/dashboard")} variant="default">
+              Go to Dashboard
+            </Button>
+          </div>
+        </Card>
       </section>
     );
   }
@@ -569,18 +600,6 @@ export default function ComplianceAnalysisPage() {
             </div>
             <div className="flex gap-2">
               <Button
-                onClick={saveToDashboard}
-                disabled={isSaved}
-                className={
-                  isSaved
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-rose-600 hover:bg-rose-700"
-                }
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {isSaved ? "Saved to Dashboard" : "Save to Dashboard"}
-              </Button>
-              <Button
                 onClick={exportToPDF}
                 disabled={exportingPDF}
                 variant="outline"
@@ -605,6 +624,14 @@ export default function ComplianceAnalysisPage() {
                   <Download className="h-4 w-4 mr-2" />
                 )}
                 Export DOCX
+              </Button>
+              <Button
+                onClick={handleDelete}
+                variant="destructive"
+                className="bg-red-600 hover:bg-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Report
               </Button>
             </div>
           </div>

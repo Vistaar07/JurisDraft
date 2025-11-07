@@ -22,32 +22,28 @@ import Link from "next/link";
 
 type StoredDoc = {
   id: string;
-  success: boolean;
+  user_id: string;
   document_type: string;
   document_text: string;
+  title?: string;
+  status?: string;
   checklist_items_included: number;
   governing_acts: string[];
   metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
 };
 
 type ComplianceReport = {
   id: string;
-  success: boolean;
+  user_id: string;
+  document_id?: string;
   document_type: string;
-  compliance_checks: Array<{
-    requirement: string;
-    status: string;
-    details: string;
-  }>;
-  loopholes: Array<{
-    title: string;
-    risk_level: string;
-  }>;
   overall_risk_score: number;
   risk_level: string;
   summary: string;
-  recommendations: string[];
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export default function DashboardPage() {
@@ -56,117 +52,92 @@ export default function DashboardPage() {
   const [complianceReports, setComplianceReports] = useState<
     ComplianceReport[]
   >([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const [docsResponse, reportsResponse] = await Promise.all([
+          fetch("/api/documents"),
+          fetch("/api/compliance"),
+        ]);
 
-    try {
-      // Load generated documents
-      const savedDocIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_documents") || "[]"
-      );
-      const docs: StoredDoc[] = [];
-
-      for (const docId of savedDocIds) {
-        const raw = localStorage.getItem(`jurisdraft_document_${docId}`);
-        if (raw) {
-          try {
-            const parsed = JSON.parse(raw);
-            docs.push(parsed);
-          } catch (e) {
-            console.error(`Failed to parse document ${docId}`, e);
-          }
+        if (!docsResponse.ok) {
+          throw new Error("Failed to fetch documents");
         }
-      }
+        if (!reportsResponse.ok) {
+          throw new Error("Failed to fetch compliance reports");
+        }
 
-      setDocuments(docs);
+        const docsData = await docsResponse.json();
+        const reportsData = await reportsResponse.json();
 
-      // Load compliance reports
-      const savedComplianceIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
-      );
-      
-      const reports: ComplianceReport[] = [];
-
-      for (const complianceId of savedComplianceIds) {
-        const raw = localStorage.getItem(
-          `jurisdraft_compliance_${complianceId}`
+        setDocuments(docsData);
+        setComplianceReports(reportsData);
+      } catch (err: unknown) {
+        console.error("Failed to load dashboard data:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load dashboard data"
         );
-
-        if (raw) {
-          try {
-            const parsed = JSON.parse(raw);
-            reports.push(parsed);
-          } catch (e) {
-            console.error(
-              `Failed to parse compliance report ${complianceId}`,
-              e
-            );
-          }
-        }
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      setComplianceReports(reports);
-    } catch (e) {
-      console.error("Failed to load data", e);
-    } finally {
-      setLoading(false);
-    }
+    fetchData();
   }, []);
 
-  const handleDelete = (docId: string) => {
+  const handleDelete = async (docId: string) => {
     if (!confirm("Are you sure you want to delete this document?")) return;
 
     try {
-      // Remove from localStorage
-      localStorage.removeItem(`jurisdraft_document_${docId}`);
+      const response = await fetch(`/api/documents/${docId}`, {
+        method: "DELETE",
+      });
 
-      // Update saved documents list
-      const savedDocIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_documents") || "[]"
-      );
-      const updated = savedDocIds.filter((id: string) => id !== docId);
-      localStorage.setItem(
-        "jurisdraft_saved_documents",
-        JSON.stringify(updated)
-      );
+      if (!response.ok) {
+        throw new Error("Failed to delete document");
+      }
 
-      // Update state
+      // Update state to remove the deleted document
       setDocuments(documents.filter((doc) => doc.id !== docId));
     } catch (e) {
       console.error("Failed to delete document", e);
-      alert("Failed to delete document. Please try again.");
+      alert(
+        e instanceof Error
+          ? e.message
+          : "Failed to delete document. Please try again."
+      );
     }
   };
 
-  const handleDeleteCompliance = (complianceId: string) => {
+  const handleDeleteCompliance = async (complianceId: string) => {
     if (!confirm("Are you sure you want to delete this compliance report?"))
       return;
 
     try {
-      // Remove from localStorage
-      localStorage.removeItem(`jurisdraft_compliance_${complianceId}`);
+      const response = await fetch(`/api/compliance/${complianceId}`, {
+        method: "DELETE",
+      });
 
-      // Update saved compliance list
-      const savedComplianceIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
-      );
-      const updated = savedComplianceIds.filter(
-        (id: string) => id !== complianceId
-      );
-      localStorage.setItem(
-        "jurisdraft_saved_compliance_dashboard",
-        JSON.stringify(updated)
-      );
+      if (!response.ok) {
+        throw new Error("Failed to delete compliance report");
+      }
 
-      // Update state
+      // Update state to remove the deleted report
       setComplianceReports(
         complianceReports.filter((report) => report.id !== complianceId)
       );
     } catch (e) {
       console.error("Failed to delete compliance report", e);
-      alert("Failed to delete compliance report. Please try again.");
+      alert(
+        e instanceof Error
+          ? e.message
+          : "Failed to delete compliance report. Please try again."
+      );
     }
   };
 
@@ -225,9 +196,23 @@ export default function DashboardPage() {
           </div>
         </MotionDiv>
 
-        {loading ? (
+        {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">Loading...</p>
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-rose-600 border-r-transparent mb-4"></div>
+            <p className="text-gray-500 text-lg">Loading your dashboard...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <AlertTriangle className="h-16 w-16 text-red-300 mx-auto mb-4" />
+            <p className="text-red-500 text-lg font-semibold mb-2">
+              Error: {error}
+            </p>
+            <p className="text-gray-500 mb-4">
+              Failed to load your dashboard data.
+            </p>
+            <Button onClick={() => window.location.reload()} variant="outline">
+              Retry
+            </Button>
           </div>
         ) : (
           <>
@@ -287,22 +272,16 @@ export default function DashboardPage() {
                             {report.overall_risk_score}/10
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">Loopholes:</span>
-                          <span className="font-semibold text-gray-900">
-                            {report.loopholes.length}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">Checks:</span>
-                          <span className="font-semibold text-gray-900">
-                            {report.compliance_checks.length}
-                          </span>
+                        <div className="text-sm">
+                          <span className="text-gray-600">Summary:</span>
+                          <p className="font-medium text-gray-900 mt-1 line-clamp-2">
+                            {report.summary || "No summary available"}
+                          </p>
                         </div>
                       </div>
 
                       <p className="text-xs text-gray-500 mb-4">
-                        {new Date(report.createdAt).toLocaleDateString()}
+                        {new Date(report.created_at).toLocaleDateString()}
                       </p>
 
                       <div className="flex items-center gap-2 pt-4 border-t">
@@ -374,7 +353,8 @@ export default function DashboardPage() {
                       </div>
 
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {doc.document_type?.replace(/_/g, " ").toUpperCase() ||
+                        {doc.title ||
+                          doc.document_type?.replace(/_/g, " ").toUpperCase() ||
                           "Untitled Document"}
                       </h3>
 

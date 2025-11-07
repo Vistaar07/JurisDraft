@@ -92,6 +92,7 @@ export default function GeneratePage() {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "submitted" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setError(null);
@@ -101,10 +102,12 @@ export default function GeneratePage() {
       return;
     }
     setStatus("submitted");
+    setIsLoading(true);
     try {
       const payload = promptToStructuredJSON(prompt);
       console.log("[Generate] Request payload:", payload);
 
+      // Step 1: Generate document from backend
       const res = await fetch("http://localhost:8000/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -118,31 +121,35 @@ export default function GeneratePage() {
       const data: GenerateResponseMeta = await res.json();
       console.log("[Generate] Response:", data);
 
-      // Create a pseudo id (could be replaced by backend id later)
-      const id = `${data.document_type}-${Date.now()}`;
+      // Step 2: Save document to database via API
+      const saveResponse = await fetch("/api/documents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          document_type: data.document_type,
+          document_text: data.document_text,
+          title: `${data.document_type
+            .replace(/_/g, " ")
+            .toUpperCase()} - ${new Date().toLocaleDateString()}`,
+          status: "draft",
+          checklist_items_included: data.checklist_items_included,
+          governing_acts: data.governing_acts,
+          metadata: data.metadata,
+        }),
+      });
 
-      // Persist in localStorage for edit page retrieval
-      if (typeof window !== "undefined") {
-        localStorage.setItem(
-          `jurisdraft_document_${id}`,
-          JSON.stringify({ id, ...data })
-        );
-
-        // Add to saved documents list for dashboard
-        const savedDocIds = JSON.parse(
-          localStorage.getItem("jurisdraft_saved_documents") || "[]"
-        );
-
-        if (!savedDocIds.includes(id)) {
-          savedDocIds.push(id);
-          localStorage.setItem(
-            "jurisdraft_saved_documents",
-            JSON.stringify(savedDocIds)
-          );
-        }
+      if (!saveResponse.ok) {
+        const errorData = await saveResponse.json().catch(() => null);
+        throw new Error(errorData?.error || "Failed to save document");
       }
 
-      router.push(`/documents/${id}/edit`);
+      const newDocument = await saveResponse.json();
+      console.log("[Generate] Document saved:", newDocument);
+
+      // Redirect to the edit page with the new document ID
+      router.push(`/documents/${newDocument.id}/edit`);
     } catch (e: unknown) {
       console.error(e);
       const msg =
@@ -150,6 +157,7 @@ export default function GeneratePage() {
       setError(msg);
       setStatus("error");
     } finally {
+      setIsLoading(false);
       setStatus("idle");
     }
   }
@@ -230,9 +238,9 @@ export default function GeneratePage() {
                       : undefined
                   }
                   variant="default"
-                  disabled={status === "submitted"}
+                  disabled={status === "submitted" || isLoading}
                 >
-                  {status === "submitted" ? (
+                  {status === "submitted" || isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <SquareArrowUpRight className="h-4 w-4" />

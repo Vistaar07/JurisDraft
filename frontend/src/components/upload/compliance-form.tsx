@@ -213,32 +213,24 @@ export default function ComplianceForm() {
 
       const result = await response.json();
 
-      // Generate unique ID and save to localStorage
-      const complianceId = `compliance_${Date.now()}_${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
+      // Save compliance report to database via API
+      const saveResponse = await fetch("/api/compliance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Send the entire JSON report we got from the Python backend
+        body: JSON.stringify(result),
+      });
 
-      const complianceData = {
-        id: complianceId,
-        ...result,
-        createdAt: new Date().toISOString(),
-      };
+      if (!saveResponse.ok) {
+        // If saving to our DB fails, we should notify the user
+        throw new Error(
+          "Failed to save the compliance report to your dashboard."
+        );
+      }
 
-      // Save to localStorage
-      localStorage.setItem(
-        `jurisdraft_compliance_${complianceId}`,
-        JSON.stringify(complianceData)
-      );
-
-      // Update saved compliance list
-      const savedComplianceIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
-      );
-      savedComplianceIds.push(complianceId);
-      localStorage.setItem(
-        "jurisdraft_saved_compliance_dashboard",
-        JSON.stringify(savedComplianceIds)
-      );
+      const newReport = await saveResponse.json(); // This will return { id: '...' }
 
       toast("Analysis Complete!", {
         description: "Redirecting to results...",
@@ -246,9 +238,9 @@ export default function ComplianceForm() {
         duration: 2000,
       });
 
-      // Redirect to analysis page
+      // Redirect to the new analysis page with the database ID
       setTimeout(() => {
-        router.push(`/compliance/${complianceId}/analysis`);
+        router.push(`/compliance/${newReport.id}/analysis`);
       }, 1000);
     } catch (error) {
       console.error("❌ Error:", error);

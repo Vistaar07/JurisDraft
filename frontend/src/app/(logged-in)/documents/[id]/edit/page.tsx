@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
@@ -16,17 +16,19 @@ import {
   FileDown,
   Sparkles,
   CheckCircle2,
+  Trash2,
 } from "lucide-react";
-import { marked } from "marked";
 import jsPDF from "jspdf";
 import { Card } from "@/components/ui/card";
 import { useEditor } from "@tiptap/react";
 
 type StoredDoc = {
   id: string;
-  success: boolean;
+  success?: boolean;
   document_type: string;
   document_text: string;
+  title?: string;
+  status?: string;
   checklist_items_included: number;
   governing_acts: string[];
   metadata: Record<string, unknown>;
@@ -36,64 +38,110 @@ export default function EditDocumentPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const id = params?.id as string;
-  const storageKey = useMemo(() => `jurisdraft_document_${id}`, [id]);
 
   const [doc, setDoc] = useState<StoredDoc | null>(null);
   const [htmlContent, setHtmlContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const editorRef = useRef<ReturnType<typeof useEditor>>(null);
 
   useEffect(() => {
     if (!id) return;
-    if (typeof window === "undefined") return;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw) as StoredDoc;
-        setDoc(parsed);
 
-        // Convert markdown to HTML
-        const markdownText = parsed.document_text || "";
-        const html = marked(markdownText, {
-          breaks: true,
-          gfm: true,
-        });
-        setHtmlContent(html as string);
+    const fetchDocument = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/documents/${id}`);
+
+        if (response.status === 404) {
+          throw new Error("Document not found.");
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch document");
+        }
+
+        const data = await response.json();
+        setDoc(data);
+        setTitle(data.title || "");
+
+        // Set the content for the editor
+        const documentText = data.document_text || "";
+        setHtmlContent(documentText);
+      } catch (e) {
+        console.error("Failed to load document", e);
+        setError(e instanceof Error ? e.message : "Failed to load document");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error("Failed to load document from storage", e);
-    }
-  }, [id, storageKey]);
+    };
 
-  const handleSave = () => {
+    fetchDocument();
+  }, [id]);
+
+  const handleSave = async () => {
     if (!doc || !editorRef.current) return;
     setSaving(true);
     try {
-      // Get the HTML content from the editor
       const editorHtml = editorRef.current.getHTML();
-      const updated = { ...doc, document_text: editorHtml };
-      localStorage.setItem(storageKey, JSON.stringify(updated));
 
-      // Store document ID in a list for dashboard access
-      const savedDocs = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_documents") || "[]"
-      );
-      if (!savedDocs.includes(id)) {
-        savedDocs.push(id);
-        localStorage.setItem(
-          "jurisdraft_saved_documents",
-          JSON.stringify(savedDocs)
-        );
+      const response = await fetch(`/api/documents/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title || doc.title,
+          document_text: editorHtml,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update document");
       }
 
+      const updatedDoc = await response.json();
+      setDoc(updatedDoc);
+
+      // Show success and redirect to dashboard
       setTimeout(() => {
         router.push("/dashboard");
       }, 500);
     } catch (e) {
       console.error("Failed to save document", e);
+      alert(e instanceof Error ? e.message : "Failed to save document");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this document? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/documents/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete document");
+      }
+
+      // On success, redirect to the dashboard
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Failed to delete document:", error);
+      alert(
+        error instanceof Error ? error.message : "Failed to delete document"
+      );
     }
   };
 
@@ -315,7 +363,31 @@ export default function EditDocumentPage() {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <Card className="p-6 bg-white shadow-lg border-gray-200 hover:shadow-xl transition-shadow duration-300">
-            {doc ? (
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-rose-600 border-r-transparent mb-4"></div>
+                <p className="text-gray-500 text-lg">Loading document...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <FileText className="h-16 w-16 text-red-300 mx-auto mb-4" />
+                <p className="text-red-500 text-lg font-semibold">{error}</p>
+                <p className="text-gray-400 text-sm mt-2">
+                  Please try again or generate a new document.
+                </p>
+                <div className="flex gap-3 justify-center mt-4">
+                  <Button onClick={goBack} variant="outline">
+                    Go to Generate
+                  </Button>
+                  <Button
+                    onClick={() => router.push("/dashboard")}
+                    variant="default"
+                  >
+                    Go to Dashboard
+                  </Button>
+                </div>
+              </div>
+            ) : doc ? (
               <div className="space-y-6">
                 <MotionDiv
                   initial={{ y: 20, opacity: 0 }}
@@ -381,6 +453,23 @@ export default function EditDocumentPage() {
                     >
                       <FileDown className="h-4 w-4 mr-2" />
                       Export to DOCX
+                    </Button>
+                  </MotionDiv>
+
+                  <div className="flex-1" />
+
+                  <MotionDiv
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={handleDelete}
+                      disabled={!doc}
+                      variant="destructive"
+                      className="bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Document
                     </Button>
                   </MotionDiv>
 
