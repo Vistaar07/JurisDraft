@@ -200,7 +200,9 @@ export default function ComplianceAnalysisPage() {
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "normal");
       pdf.text(
-        `Risk Level: ${complianceData.risk_level} (Score: ${complianceData.overall_risk_score}/10)`,
+        `Risk Level: ${complianceData.risk_level.toUpperCase()} (Score: ${
+          complianceData.overall_risk_score
+        }/10)`,
         margin,
         yPosition
       );
@@ -249,7 +251,11 @@ export default function ComplianceAnalysisPage() {
 
           pdf.setFontSize(10);
           pdf.setFont("helvetica", "normal");
-          pdf.text(`Risk Level: ${loophole.risk_level}`, margin + 5, yPosition);
+          pdf.text(
+            `Risk Level: ${loophole.risk_level.toUpperCase()}`,
+            margin + 5,
+            yPosition
+          );
           yPosition += 5;
 
           const descLines = pdf.splitTextToSize(
@@ -384,7 +390,9 @@ export default function ComplianceAnalysisPage() {
                 spacing: { before: 200, after: 100 },
               }),
               new Paragraph({
-                text: `Risk Level: ${complianceData.risk_level} (Score: ${complianceData.overall_risk_score}/10)`,
+                text: `Risk Level: ${complianceData.risk_level.toUpperCase()} (Score: ${
+                  complianceData.overall_risk_score
+                }/10)`,
                 spacing: { after: 200 },
               }),
               new Paragraph({
@@ -415,7 +423,7 @@ export default function ComplianceAnalysisPage() {
                             text: "Risk Level: ",
                             bold: true,
                           }),
-                          new TextRun(loophole.risk_level),
+                          new TextRun(loophole.risk_level.toUpperCase()),
                         ],
                         spacing: { after: 50 },
                       }),
@@ -655,7 +663,7 @@ export default function ComplianceAnalysisPage() {
                       complianceData.risk_level
                     )} text-lg px-4 py-1`}
                   >
-                    {complianceData.risk_level}
+                    {complianceData.risk_level.toUpperCase()}
                   </Badge>
                 </div>
                 <div className="text-right">
@@ -699,7 +707,7 @@ export default function ComplianceAnalysisPage() {
                         {loophole.title}
                       </CardTitle>
                       <Badge className={getRiskBadgeColor(loophole.risk_level)}>
-                        {loophole.risk_level}
+                        {loophole.risk_level.toUpperCase()}
                       </Badge>
                     </div>
                   </CardHeader>

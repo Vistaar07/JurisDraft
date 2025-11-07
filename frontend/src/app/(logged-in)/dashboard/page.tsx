@@ -256,7 +256,7 @@ export default function DashboardPage() {
                             report.risk_level
                           )} text-xs`}
                         >
-                          {report.risk_level}
+                          {report.risk_level.toUpperCase()}
                         </Badge>
                       </div>
 
