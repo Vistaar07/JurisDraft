@@ -21,6 +21,7 @@ import {
 import jsPDF from "jspdf";
 import { Card } from "@/components/ui/card";
 import { useEditor } from "@tiptap/react";
+import { marked } from "marked";
 
 type StoredDoc = {
   id: string;
@@ -40,7 +41,7 @@ export default function EditDocumentPage() {
   const id = params?.id as string;
 
   const [doc, setDoc] = useState<StoredDoc | null>(null);
-  const [htmlContent, setHtmlContent] = useState("");
+  const [markdownContent, setMarkdownContent] = useState("");
   const [title, setTitle] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,9 +70,9 @@ export default function EditDocumentPage() {
         setDoc(data);
         setTitle(data.title || "");
 
-        // Set the content for the editor
+        // Set the content for the editor - use markdown format
         const documentText = data.document_text || "";
-        setHtmlContent(documentText);
+        setMarkdownContent(documentText);
       } catch (e) {
         console.error("Failed to load document", e);
         setError(e instanceof Error ? e.message : "Failed to load document");
@@ -87,14 +88,17 @@ export default function EditDocumentPage() {
     if (!doc || !editorRef.current) return;
     setSaving(true);
     try {
-      const editorHtml = editorRef.current.getHTML();
+      // Get markdown content from editor
+      const markdown =
+        (editorRef.current as any).getMarkdown?.() ||
+        editorRef.current.getText();
 
       const response = await fetch(`/api/documents/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title || doc.title,
-          document_text: editorHtml,
+          document_text: markdown,
         }),
       });
 
@@ -171,21 +175,126 @@ export default function EditDocumentPage() {
       pdf.line(margin, yPosition, pageWidth - margin, yPosition);
       yPosition += 10;
 
-      // Get plain text from editor
-      const editorText = editorRef.current.getText();
-      pdf.setFontSize(11);
-      pdf.setFont("helvetica", "normal");
-
-      // Split text into lines that fit the page width
-      const lines = pdf.splitTextToSize(editorText, maxWidth);
+      // Get markdown content and parse it for better formatting
+      const markdown =
+        (editorRef.current as any).getMarkdown?.() ||
+        editorRef.current.getText();
+      const lines = markdown.split("\n");
 
       for (const line of lines) {
-        if (yPosition > pageHeight - margin) {
-          pdf.addPage();
-          yPosition = margin;
+        if (!line.trim()) {
+          yPosition += 5;
+          continue;
         }
-        pdf.text(line, margin, yPosition);
-        yPosition += 7;
+
+        // Handle headings
+        if (line.startsWith("# ")) {
+          pdf.setFontSize(14);
+          pdf.setFont("helvetica", "bold");
+          const text = line.replace(/^# /, "");
+          const wrappedLines = pdf.splitTextToSize(text, maxWidth);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin, yPosition);
+            yPosition += 8;
+          }
+          yPosition += 3;
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "normal");
+        } else if (line.startsWith("## ")) {
+          pdf.setFontSize(12);
+          pdf.setFont("helvetica", "bold");
+          const text = line.replace(/^## /, "");
+          const wrappedLines = pdf.splitTextToSize(text, maxWidth);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin, yPosition);
+            yPosition += 7;
+          }
+          yPosition += 2;
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "normal");
+        } else if (line.startsWith("### ")) {
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          const text = line.replace(/^### /, "");
+          const wrappedLines = pdf.splitTextToSize(text, maxWidth);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin, yPosition);
+            yPosition += 6;
+          }
+          yPosition += 2;
+          pdf.setFont("helvetica", "normal");
+        } else if (line.startsWith("- ") || line.startsWith("* ")) {
+          // Bullet list
+          pdf.setFont("helvetica", "normal");
+          const text = line.replace(/^[*-] /, "");
+          const wrappedLines = pdf.splitTextToSize("• " + text, maxWidth - 5);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin + 5, yPosition);
+            yPosition += 6;
+          }
+        } else if (/^\d+\. /.test(line)) {
+          // Numbered list
+          pdf.setFont("helvetica", "normal");
+          const text = line;
+          const wrappedLines = pdf.splitTextToSize(text, maxWidth - 5);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin + 5, yPosition);
+            yPosition += 6;
+          }
+        } else if (line.startsWith("> ")) {
+          // Blockquote
+          pdf.setFont("helvetica", "italic");
+          const text = line.replace(/^> /, "");
+          const wrappedLines = pdf.splitTextToSize(text, maxWidth - 10);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin + 10, yPosition);
+            yPosition += 6;
+          }
+          pdf.setFont("helvetica", "normal");
+        } else {
+          // Regular text - handle bold and italic
+          pdf.setFont("helvetica", "normal");
+          const processedLine = line
+            .replace(/\*\*\*(.+?)\*\*\*/g, "$1")
+            .replace(/\*\*(.+?)\*\*/g, "$1")
+            .replace(/\*(.+?)\*/g, "$1")
+            .replace(/~~(.+?)~~/g, "$1")
+            .replace(/`(.+?)`/g, "$1");
+
+          const wrappedLines = pdf.splitTextToSize(processedLine, maxWidth);
+          for (const wrappedLine of wrappedLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(wrappedLine, margin, yPosition);
+            yPosition += 6;
+          }
+        }
       }
 
       // Save the PDF
@@ -204,7 +313,13 @@ export default function EditDocumentPage() {
     setExporting(true);
 
     try {
-      const htmlContent = editorRef.current.getHTML();
+      // Get markdown content from editor
+      const markdown =
+        (editorRef.current as any).getMarkdown?.() ||
+        editorRef.current.getText();
+
+      // Convert markdown to HTML using marked
+      const htmlContent = await marked(markdown);
 
       // Create a complete HTML document with styling
       const styledHtml = `
@@ -213,12 +328,64 @@ export default function EditDocumentPage() {
         <head>
           <meta charset="UTF-8">
           <style>
-            body { font-family: Calibri, Arial, sans-serif; line-height: 1.6; margin: 40px; }
-            h1, h2, h3 { color: #333; margin-top: 20px; }
-            p { margin: 10px 0; }
-            ul, ol { margin: 10px 0; padding-left: 30px; }
-            blockquote { border-left: 3px solid #ccc; margin: 10px 0; padding-left: 15px; color: #666; }
-            code { background: #f4f4f4; padding: 2px 6px; }
+            body { 
+              font-family: Calibri, Arial, sans-serif; 
+              line-height: 1.6; 
+              margin: 40px;
+              font-size: 11pt;
+            }
+            h1 { 
+              color: #333; 
+              margin-top: 20px; 
+              font-size: 16pt;
+              font-weight: bold;
+            }
+            h2 { 
+              color: #333; 
+              margin-top: 16px; 
+              font-size: 14pt;
+              font-weight: bold;
+            }
+            h3 { 
+              color: #333; 
+              margin-top: 14px; 
+              font-size: 12pt;
+              font-weight: bold;
+            }
+            p { 
+              margin: 10px 0; 
+              text-align: justify;
+            }
+            ul, ol { 
+              margin: 10px 0; 
+              padding-left: 30px; 
+            }
+            li {
+              margin: 5px 0;
+            }
+            blockquote { 
+              border-left: 3px solid #ccc; 
+              margin: 10px 0; 
+              padding-left: 15px; 
+              color: #666;
+              font-style: italic;
+            }
+            code { 
+              background: #f4f4f4; 
+              padding: 2px 6px;
+              font-family: 'Courier New', monospace;
+            }
+            strong {
+              font-weight: bold;
+            }
+            em {
+              font-style: italic;
+            }
+            hr {
+              border: none;
+              border-top: 1px solid #ccc;
+              margin: 20px 0;
+            }
           </style>
         </head>
         <body>
@@ -395,8 +562,8 @@ export default function EditDocumentPage() {
                   transition={{ duration: 0.5, delay: 0.6 }}
                 >
                   <MinimalTiptap
-                    content={htmlContent}
-                    onChange={(html) => setHtmlContent(html)}
+                    content={markdownContent}
+                    onChange={(markdown) => setMarkdownContent(markdown)}
                     placeholder="Start editing your legal document..."
                     className="min-h-[60vh] bg-white"
                     onEditorReady={(editor) => {

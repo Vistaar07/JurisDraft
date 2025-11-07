@@ -3,6 +3,7 @@
 import * as React from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { Markdown } from "tiptap-markdown";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
@@ -53,11 +54,19 @@ function MinimalTiptap({
           keepAttributes: false,
         },
       }),
+      Markdown.configure({
+        html: true,
+        transformPastedText: true,
+        transformCopiedText: true,
+      }),
     ],
     content,
     editable,
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML());
+      // Get markdown content instead of HTML
+      const markdown =
+        (editor.storage as any).markdown?.getMarkdown() || editor.getText();
+      onChange?.(markdown);
     },
     editorProps: {
       attributes: {
@@ -90,6 +99,18 @@ function MinimalTiptap({
       editor.commands.setContent(content);
     }
   }, [content, editor]);
+
+  // Helper method to get markdown content
+  React.useEffect(() => {
+    if (editor) {
+      // Attach getMarkdown method to editor instance
+      (editor as any).getMarkdown = () => {
+        return (
+          (editor.storage as any).markdown?.getMarkdown() || editor.getText()
+        );
+      };
+    }
+  }, [editor]);
 
   if (!editor) {
     return null;
