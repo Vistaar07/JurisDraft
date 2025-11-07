@@ -38,7 +38,8 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"],
+    allow_origins=["http://localhost:3000",
+                   "http://localhost:3001", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -54,7 +55,8 @@ except Exception as e:
 
 def _extract_text_from_pdf(file_path: str) -> str:
     if not _HAS_PYPDF:
-        raise HTTPException(status_code=500, detail="PDF parsing dependency 'pypdf' not installed")
+        raise HTTPException(
+            status_code=500, detail="PDF parsing dependency 'pypdf' not installed")
     text = ""
     with open(file_path, 'rb') as f:
         reader = pypdf.PdfReader(f)  # type: ignore[attr-defined]
@@ -78,7 +80,8 @@ def _extract_text(file_path: str, filename: str) -> str:
     if ext == 'txt':
         with open(file_path, 'r', encoding='utf-8') as f:
             return f.read()
-    raise HTTPException(status_code=400, detail=f"Unsupported file format: {ext}")
+    raise HTTPException(
+        status_code=400, detail=f"Unsupported file format: {ext}")
 
 
 @app.get("/health")
@@ -93,12 +96,19 @@ def health():
 
 
 @app.post("/check-compliance/text")
-def check_compliance_text(document_text: str, document_type: str, jurisdiction: str = "India"):
+def check_compliance_text(
+    document_text: str = Form(...),
+    document_type: str = Form(...),
+    jurisdiction: str = Form("India")
+):
     if not _checker:
-        raise HTTPException(status_code=503, detail="Compliance checker not initialized")
+        raise HTTPException(
+            status_code=503, detail="Compliance checker not initialized")
     if not document_text.strip():
-        raise HTTPException(status_code=400, detail="Document text cannot be empty")
-    result = _checker.check_document(document_text, document_type, jurisdiction)
+        raise HTTPException(
+            status_code=400, detail="Document text cannot be empty")
+    result = _checker.check_document(
+        document_text, document_type, jurisdiction)
     return {
         "success": True,
         "document_type": result.document_type,
@@ -118,7 +128,8 @@ async def check_compliance_file(
     jurisdiction: str = Form("India")
 ):
     if not _checker:
-        raise HTTPException(status_code=503, detail="Compliance checker not initialized")
+        raise HTTPException(
+            status_code=503, detail="Compliance checker not initialized")
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file provided")
     temp = None

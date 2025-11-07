@@ -1,35 +1,16 @@
+"use client";
+
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
 import UploadForm from "@/components/upload/upload-form";
 import UploadHeader from "@/components/upload/upload-header";
-// import { getPriceIdForActiveUser, hasReachedUploadLimit } from "@/lib/user";
-import { containerVariants, pricingPlans } from "@/utils/constants";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import ComplianceForm from "@/components/upload/compliance-form";
+import { containerVariants, itemsVariants } from "@/utils/constants";
+import { useState } from "react";
+import { FileText, PenSquare } from "lucide-react";
 
-export const maxDuration = 60;
-
-export default async function UploadPage() {
-  const user = await currentUser();
-
-  if (!user?.id) {
-    redirect("/sign-in");
-  }
-
-  const userId = user.id;
-
-  //   const { hasReachedLimit } = await hasReachedUploadLimit(userId);
-
-  //   const userPriceId = await getPriceIdForActiveUser(
-  //     user.emailAddresses[0].emailAddress
-  //   );
-  //   const isPro =
-  //     userPriceId &&
-  //     pricingPlans.find((plan) => plan.priceId === userPriceId)?.id === "pro";
-
-  //   if (hasReachedLimit && !isPro) {
-  //     redirect("/dashboard");
-  //   }
+export default function UploadPage() {
+  const [mode, setMode] = useState<"document" | "compliance">("document");
 
   return (
     <section className="min-h-screen">
@@ -38,11 +19,41 @@ export default async function UploadPage() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className=" mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8"
+        className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8"
       >
         <div className="flex flex-col items-center justify-center gap-6 text-center">
           <UploadHeader />
-          <UploadForm />
+
+          {/* Mode Toggle */}
+          <MotionDiv
+            variants={itemsVariants}
+            className="flex gap-2 items-center"
+          >
+            <button
+              onClick={() => setMode("document")}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+                mode === "document"
+                  ? "bg-rose-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
+            >
+              <FileText className="h-5 w-5" />
+              Document Generation
+            </button>
+            <button
+              onClick={() => setMode("compliance")}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+                mode === "compliance"
+                  ? "bg-rose-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
+            >
+              <PenSquare className="h-5 w-5" />
+              Compliance Check
+            </button>
+          </MotionDiv>
+
+          {mode === "document" ? <UploadForm /> : <ComplianceForm />}
         </div>
       </MotionDiv>
     </section>
