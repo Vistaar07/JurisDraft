@@ -19,7 +19,9 @@ import {
   AlertCircle,
   ArrowLeft,
   Loader2,
+  Save,
 } from "lucide-react";
+import { toast } from "sonner";
 import jsPDF from "jspdf";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
 import { saveAs } from "file-saver";
@@ -62,6 +64,7 @@ export default function ComplianceAnalysisPage() {
   );
   const [exportingPDF, setExportingPDF] = useState(false);
   const [exportingDOCX, setExportingDOCX] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -73,6 +76,12 @@ export default function ComplianceAnalysisPage() {
       if (raw) {
         const parsed = JSON.parse(raw);
         setComplianceData(parsed);
+
+        // Check if already saved to dashboard
+        const savedIds = JSON.parse(
+          localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
+        );
+        setIsSaved(savedIds.includes(complianceId));
       } else {
         router.push("/upload");
       }
@@ -97,6 +106,48 @@ export default function ComplianceAnalysisPage() {
     if (level === "high") return <XCircle className="h-5 w-5" />;
     if (level === "medium") return <AlertCircle className="h-5 w-5" />;
     return <CheckCircle2 className="h-5 w-5" />;
+  };
+
+  const saveToDashboard = () => {
+    if (!complianceData) return;
+
+    try {
+      const complianceId = params.id as string;
+
+      // Get existing saved compliance reports
+      const savedIds = JSON.parse(
+        localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
+      );
+
+      // Add this report if not already saved
+      if (!savedIds.includes(complianceId)) {
+        savedIds.push(complianceId);
+        localStorage.setItem(
+          "jurisdraft_saved_compliance_dashboard",
+          JSON.stringify(savedIds)
+        );
+        setIsSaved(true);
+
+        toast("Report Saved!", {
+          description: "Compliance report has been saved to your dashboard",
+          icon: "✅",
+          duration: 3000,
+        });
+      } else {
+        toast("Already Saved", {
+          description: "This report is already in your dashboard",
+          icon: "ℹ️",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving to dashboard:", error);
+      toast("Error", {
+        description: "Failed to save report. Please try again.",
+        icon: "❌",
+        duration: 3000,
+      });
+    }
   };
 
   const exportToPDF = async () => {
@@ -518,6 +569,18 @@ export default function ComplianceAnalysisPage() {
             </div>
             <div className="flex gap-2">
               <Button
+                onClick={saveToDashboard}
+                disabled={isSaved}
+                className={
+                  isSaved
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-rose-600 hover:bg-rose-700"
+                }
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {isSaved ? "Saved to Dashboard" : "Save to Dashboard"}
+              </Button>
+              <Button
                 onClick={exportToPDF}
                 disabled={exportingPDF}
                 variant="outline"
@@ -598,7 +661,11 @@ export default function ComplianceAnalysisPage() {
             </h2>
             <div className="space-y-4">
               {complianceData.loopholes.map((loophole, index) => (
-                <Card key={index} className="bg-white shadow">
+                <Card
+                  key={index}
+                  className="bg-white shadow sticky"
+                  style={{ top: `${80 + index * 20}px` }}
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">

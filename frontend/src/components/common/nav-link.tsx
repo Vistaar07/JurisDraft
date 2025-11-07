@@ -2,7 +2,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
 
 export default function NavLink({
   href,
@@ -15,12 +14,9 @@ export default function NavLink({
 }) {
   const pathname = usePathname();
 
-  // Calculate active state using useMemo to avoid hydration issues
-  const isActive = useMemo(() => {
-    // During SSR, pathname will be null, so return false
-    if (typeof window === "undefined") return false;
-    return pathname === href || (href !== "/" && pathname?.startsWith(href));
-  }, [pathname, href]);
+  // Calculate active state - pathname is consistent between server and client in Next.js App Router
+  const isActive =
+    pathname === href || (href !== "/" && pathname?.startsWith(href));
 
   return (
     <Link
@@ -30,7 +26,6 @@ export default function NavLink({
         className,
         isActive && "text-rose-500"
       )}
-      suppressHydrationWarning
     >
       {children}
     </Link>

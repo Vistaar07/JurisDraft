@@ -264,24 +264,23 @@ export default function ComplianceForm() {
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
-      <CardHeader className="border-b">
-        <CardTitle className="flex items-center gap-2 text-2xl">
-          <FileText className="h-6 w-6 text-rose-600" />
-          Compliance & Loophole Detection
+      <CardHeader className="border-b pb-4">
+        <CardTitle className="flex items-center gap-2 text-xl">
+          <FileText className="h-5 w-5 text-rose-600" />
+          Analyze Your Document
         </CardTitle>
-        <p className="text-sm text-gray-600 mt-2">
-          Upload a document or paste text to check for compliance issues and
-          potential loopholes
+        <p className="text-sm text-gray-600 mt-1">
+          Upload a document or paste text to check for compliance issues
         </p>
       </CardHeader>
-      <CardContent className="pt-6">
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="pt-4 pb-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           {/* Input Mode Toggle */}
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setInputMode("text")}
-              className={`flex-1 py-3 rounded-lg font-medium transition-all ${
+              className={`flex-1 py-2 rounded-lg font-medium transition-all text-sm ${
                 inputMode === "text"
                   ? "bg-rose-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -292,7 +291,7 @@ export default function ComplianceForm() {
             <button
               type="button"
               onClick={() => setInputMode("file")}
-              className={`flex-1 py-3 rounded-lg font-medium transition-all ${
+              className={`flex-1 py-2 rounded-lg font-medium transition-all text-sm ${
                 inputMode === "file"
                   ? "bg-rose-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -331,7 +330,7 @@ export default function ComplianceForm() {
                 value={documentText}
                 onChange={(e) => setDocumentText(e.target.value)}
                 placeholder="Paste your legal document text here..."
-                className="min-h-[300px] resize-y"
+                className="min-h-[200px] resize-y"
                 disabled={isLoading}
               />
               <p className="text-xs text-gray-500">
@@ -343,8 +342,8 @@ export default function ComplianceForm() {
               <label className="text-sm font-medium text-gray-700">
                 Upload Document *
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-rose-400 transition-colors">
-                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-rose-400 transition-colors">
+                <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
                 <Input
                   type="file"
                   accept=".pdf,.docx,.txt"
@@ -353,7 +352,7 @@ export default function ComplianceForm() {
                   className="max-w-xs mx-auto"
                 />
                 {selectedFile && (
-                  <p className="mt-4 text-sm text-gray-600">
+                  <p className="mt-3 text-sm text-gray-600">
                     Selected: {selectedFile.name}
                   </p>
                 )}
@@ -368,7 +367,7 @@ export default function ComplianceForm() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-rose-600 hover:bg-rose-700 text-white py-6 text-lg font-semibold"
+            className="w-full bg-rose-600 hover:bg-rose-700 text-white py-5 text-base font-semibold"
           >
             {isLoading ? (
               <>

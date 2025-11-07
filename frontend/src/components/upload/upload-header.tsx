@@ -20,11 +20,11 @@ export default function UploadHeader() {
       </MotionDiv>
       <MotionDiv
         variants={itemsVariants}
-        className="capitalize text-3xl font-bold tracking-light text-gray-900 sm:text-4xl"
+        className="text-3xl font-bold tracking-light text-gray-900 sm:text-4xl"
       >
-        Start uploading{" "}
+        Compliance &{" "}
         <span className="relative inline-block">
-          <span className="relative z-10 px-2">your PDFs</span>
+          <span className="relative z-10 px-2">Loophole Detection</span>
           <span
             className="absolute inset-0 bg-rose-200/50 -rotate-2
           rounded-lg transform -skey-y-1"
@@ -36,7 +36,10 @@ export default function UploadHeader() {
         variants={itemsVariants}
         className="mt-2 text-lg leading-8 text-gray-600 max-w-2xl text-center"
       >
-        <p>Upload your PDF and let our AI do the magic! ✨</p>
+        <p>
+          Analyze legal documents for compliance issues and potential loopholes!
+          🔍
+        </p>
       </MotionDiv>
     </div>
   );
