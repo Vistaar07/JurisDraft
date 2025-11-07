@@ -2,10 +2,40 @@
 
 import { Scale } from "lucide-react";
 import NavLink from "./nav-link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, useAuth } from "@clerk/nextjs";
 import PlanBadge from "./plan-badge";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const [userPlan, setUserPlan] = useState<string>("Free");
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      if (!isLoaded || !isSignedIn) {
+        setUserPlan("Free");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/user/plan", {
+          cache: "no-store",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUserPlan(data.plan || "Free");
+        }
+      } catch (error) {
+        console.error("Error fetching user plan:", error);
+      }
+    };
+
+    fetchUserPlan();
+  }, [isLoaded, isSignedIn]);
+
+  // Check if user has a paid plan
+  const hasPaidPlan = userPlan === "Basic" || userPlan === "Pro";
+
   return (
     <nav className="container flex items-center justify-between py-4 lg:px-8 px-2 mx-auto">
       <div className="flex lg:flex-1">
@@ -17,30 +47,33 @@ export default function Navbar() {
         </NavLink>
       </div>
 
-      <div
-        className="flex lg:justify-center gap-4 lg:gap-12 lg:items-center"
-        suppressHydrationWarning
-      >
-        <NavLink href="/#pricing">Pricing</NavLink>
-        <SignedIn>
-          <NavLink href="/dashboard">Your Documents</NavLink>
-          <NavLink href="/legal-chat">Legal Chat</NavLink>
-        </SignedIn>
+      <div className="flex lg:justify-center gap-4 lg:gap-12 lg:items-center">
+        {!hasPaidPlan && <NavLink href="/#pricing">Pricing</NavLink>}
+        {isLoaded && (
+          <SignedIn>
+            <NavLink href="/dashboard">Dashboard</NavLink>
+            <NavLink href="/legal-chat">Legal Chat</NavLink>
+          </SignedIn>
+        )}
       </div>
 
-      <div className="flex lg:justify-end lg:flex-1" suppressHydrationWarning>
-        <SignedIn>
-          <div className="flex gap-2 items-center">
-            <NavLink href="/upload">Upload Document</NavLink>
-            <div suppressHydrationWarning>
-              <PlanBadge />
-            </div>
-            <UserButton />
-          </div>
-        </SignedIn>
-        <SignedOut>
-          <NavLink href="/sign-in">Sign In</NavLink>
-        </SignedOut>
+      <div className="flex lg:justify-end lg:flex-1">
+        {isLoaded ? (
+          <>
+            <SignedIn>
+              <div className="flex gap-2 items-center">
+                <NavLink href="/upload">Compliance Analysis</NavLink>
+                <PlanBadge />
+                <UserButton />
+              </div>
+            </SignedIn>
+            <SignedOut>
+              <NavLink href="/sign-in">Sign In</NavLink>
+            </SignedOut>
+          </>
+        ) : (
+          <div className="h-10 w-20" />
+        )}
       </div>
     </nav>
   );

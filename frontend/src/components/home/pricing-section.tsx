@@ -5,7 +5,7 @@ import { containerVariants, itemsVariants } from "@/utils/constants";
 import { ArrowRight, CheckIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { MotionDiv, MotionSection } from "../common/motion-wrapper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -19,6 +19,10 @@ type PriceType = {
   paymentLink?: string;
   priceId?: string;
   isStripePlan?: boolean;
+};
+
+type PricingCardProps = PriceType & {
+  userPlan: string;
 };
 
 const listVariant = {
@@ -40,12 +44,27 @@ const PricingCard = ({
   paymentLink,
   priceId,
   isStripePlan,
-}: PriceType) => {
+  userPlan,
+}: PricingCardProps) => {
   const [loading, setLoading] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
+  // Check if user already has an active plan
+  const hasActivePlan =
+    isLoaded && (userPlan === "Basic" || userPlan === "Pro");
+  const isCurrentPlan = isLoaded && userPlan === name;
+  const isDisabled = hasActivePlan && !isCurrentPlan;
+
   const handleSubscribe = async () => {
+    // Prevent action if user has an active plan (unless it's their current plan)
+    if (isDisabled) {
+      toast.error(
+        "You already have an active plan. Please cancel your current subscription first."
+      );
+      return;
+    }
+
     // If not a Stripe plan, just navigate to the link
     if (!isStripePlan || !priceId) {
       router.push(paymentLink || "/sign-up");
@@ -97,7 +116,7 @@ const PricingCard = ({
     >
       <div
         className={cn(
-          "relative flex flex-col h-full gap-4 lg:gap-8 z-10 p-8 border border-gray-500/20 rounded-2xl bg-white",
+          "relative flex flex-col h-full gap-4 lg:gap-6 z-10 p-8 border border-gray-500/20 rounded-2xl bg-white",
           isMostPopular && "border-rose-500 gap-5 border-2"
         )}
       >
@@ -140,15 +159,28 @@ const PricingCard = ({
           variants={listVariant}
           className="space-y-2 flex justify-center w-full"
         >
-          {isStripePlan ? (
+          {isCurrentPlan ? (
+            <button
+              disabled
+              className={cn(
+                "w-full rounded-full flex items-center justify-center gap-2 bg-linear-to-r text-white border-2 py-3 font-semibold transition-all duration-300 opacity-50 cursor-not-allowed",
+                isMostPopular
+                  ? "from-rose-800 to-rose-500 border-rose-900"
+                  : "from-rose-400 to-rose-500 border-rose-100"
+              )}
+            >
+              Current Plan <CheckIcon size={18} />
+            </button>
+          ) : isStripePlan ? (
             <button
               onClick={handleSubscribe}
-              disabled={loading}
+              disabled={loading || isDisabled}
               className={cn(
                 "w-full rounded-full flex items-center justify-center gap-2 bg-linear-to-r text-white border-2 py-3 font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
                 isMostPopular
                   ? "from-rose-800 to-rose-500 hover:from-rose-500 hover:to-rose-800 border-rose-900"
-                  : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100"
+                  : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100",
+                isDisabled && "hover:from-rose-800 hover:to-rose-500"
               )}
             >
               {loading ? (
@@ -164,12 +196,22 @@ const PricingCard = ({
             </button>
           ) : (
             <Link
-              href={paymentLink || "/sign-up"}
+              href={isDisabled ? "#" : paymentLink || "/sign-up"}
+              onClick={(e) => {
+                if (isDisabled) {
+                  e.preventDefault();
+                  toast.error(
+                    "You already have an active plan. Please cancel your current subscription first."
+                  );
+                }
+              }}
               className={cn(
                 "w-full rounded-full flex items-center justify-center gap-2 bg-linear-to-r text-white border-2 py-3 font-semibold transition-all duration-300",
                 isMostPopular
                   ? "from-rose-800 to-rose-500 hover:from-rose-500 hover:to-rose-800 border-rose-900"
-                  : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100"
+                  : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100",
+                isDisabled &&
+                  "opacity-50 cursor-not-allowed hover:from-rose-800 hover:to-rose-500"
               )}
             >
               Get Started <ArrowRight size={18} />
@@ -182,6 +224,32 @@ const PricingCard = ({
 };
 
 export default function PricingSection() {
+  const { isSignedIn, isLoaded } = useAuth();
+  const [userPlan, setUserPlan] = useState<string>("Free");
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      if (!isLoaded || !isSignedIn) {
+        setUserPlan("Free");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/user/plan", {
+          cache: "no-store",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUserPlan(data.plan || "Free");
+        }
+      } catch (error) {
+        console.error("Error fetching user plan:", error);
+      }
+    };
+
+    fetchUserPlan();
+  }, [isSignedIn, isLoaded]);
+
   const plans: PriceType[] = [
     {
       name: "Basic",
@@ -240,7 +308,7 @@ export default function PricingSection() {
       className="relative overflow-hidden bg-gray-50"
       id="pricing"
     >
-      <div className="py-12 lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="pt-4 pb-12 lg:pt-8 lg:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <MotionDiv
           variants={itemsVariants}
           className="flex flex-col items-center justify-center w-full pb-12"
@@ -254,7 +322,7 @@ export default function PricingSection() {
         </MotionDiv>
         <div className="relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8">
           {plans.map((plan) => (
-            <PricingCard key={plan.name} {...plan} />
+            <PricingCard key={plan.name} {...plan} userPlan={userPlan} />
           ))}
         </div>
       </div>
