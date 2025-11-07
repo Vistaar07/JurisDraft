@@ -8,6 +8,7 @@ import { containerVariants, itemsVariants } from "@/utils/constants";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DeleteDialog } from "@/components/ui/delete-dialog";
 import {
   FileText,
   Edit,
@@ -55,6 +56,15 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteType, setDeleteType] = useState<"document" | "compliance">(
+    "document"
+  );
+  const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+  const [deleteItemName, setDeleteItemName] = useState<string>("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -91,53 +101,73 @@ export default function DashboardPage() {
   }, []);
 
   const handleDelete = async (docId: string) => {
-    if (!confirm("Are you sure you want to delete this document?")) return;
+    const doc = documents.find((d) => d.id === docId);
+    const name =
+      doc?.title ||
+      doc?.document_type?.replace(/_/g, " ").toUpperCase() ||
+      "this document";
 
-    try {
-      const response = await fetch(`/api/documents/${docId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete document");
-      }
-
-      // Update state to remove the deleted document
-      setDocuments(documents.filter((doc) => doc.id !== docId));
-    } catch (e) {
-      console.error("Failed to delete document", e);
-      alert(
-        e instanceof Error
-          ? e.message
-          : "Failed to delete document. Please try again."
-      );
-    }
+    setDeleteType("document");
+    setDeleteItemId(docId);
+    setDeleteItemName(name);
+    setDeleteDialogOpen(true);
   };
 
   const handleDeleteCompliance = async (complianceId: string) => {
-    if (!confirm("Are you sure you want to delete this compliance report?"))
-      return;
+    const report = complianceReports.find((r) => r.id === complianceId);
+    const name =
+      report?.document_type?.replace(/_/g, " ").toUpperCase() ||
+      "this compliance report";
+
+    setDeleteType("compliance");
+    setDeleteItemId(complianceId);
+    setDeleteItemName(name);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteItemId) return;
+
+    setIsDeleting(true);
 
     try {
-      const response = await fetch(`/api/compliance/${complianceId}`, {
-        method: "DELETE",
-      });
+      if (deleteType === "document") {
+        const response = await fetch(`/api/documents/${deleteItemId}`, {
+          method: "DELETE",
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to delete compliance report");
+        if (!response.ok) {
+          throw new Error("Failed to delete document");
+        }
+
+        setDocuments(documents.filter((doc) => doc.id !== deleteItemId));
+      } else {
+        const response = await fetch(`/api/compliance/${deleteItemId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete compliance report");
+        }
+
+        setComplianceReports(
+          complianceReports.filter((report) => report.id !== deleteItemId)
+        );
       }
 
-      // Update state to remove the deleted report
-      setComplianceReports(
-        complianceReports.filter((report) => report.id !== complianceId)
-      );
+      // Close dialog and reset state
+      setDeleteDialogOpen(false);
+      setDeleteItemId(null);
+      setDeleteItemName("");
     } catch (e) {
-      console.error("Failed to delete compliance report", e);
+      console.error(`Failed to delete ${deleteType}`, e);
       alert(
         e instanceof Error
           ? e.message
-          : "Failed to delete compliance report. Please try again."
+          : `Failed to delete ${deleteType}. Please try again.`
       );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -404,6 +434,29 @@ export default function DashboardPage() {
           </>
         )}
       </MotionDiv>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setDeleteItemId(null);
+          setDeleteItemName("");
+        }}
+        onConfirm={confirmDelete}
+        title={
+          deleteType === "document"
+            ? "Delete Document"
+            : "Delete Compliance Report"
+        }
+        description={
+          deleteType === "document"
+            ? "Are you sure you want to delete this document? This action cannot be undone."
+            : "Are you sure you want to delete this compliance report? This action cannot be undone."
+        }
+        itemName={deleteItemName}
+        isDeleting={isDeleting}
+      />
     </section>
   );
 }
