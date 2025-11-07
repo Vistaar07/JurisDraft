@@ -8,7 +8,6 @@ import { containerVariants, itemsVariants } from "@/utils/constants";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   FileText,
   Edit,
@@ -87,12 +86,14 @@ export default function DashboardPage() {
       const savedComplianceIds = JSON.parse(
         localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
       );
+      
       const reports: ComplianceReport[] = [];
 
       for (const complianceId of savedComplianceIds) {
         const raw = localStorage.getItem(
           `jurisdraft_compliance_${complianceId}`
         );
+
         if (raw) {
           try {
             const parsed = JSON.parse(raw);
@@ -231,7 +232,7 @@ export default function DashboardPage() {
         ) : (
           <>
             {/* Compliance Reports Section */}
-            <MotionDiv variants={itemsVariants} className="mb-12">
+            <div className="mb-12">
               <div className="flex items-center gap-3 mb-6">
                 <Shield className="h-7 w-7 text-rose-600" />
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -328,10 +329,10 @@ export default function DashboardPage() {
                   ))}
                 </div>
               )}
-            </MotionDiv>
+            </div>
 
             {/* Generated Documents Section */}
-            <MotionDiv variants={itemsVariants}>
+            <div>
               <div className="flex items-center gap-3 mb-6">
                 <FileText className="h-7 w-7 text-rose-600" />
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -418,7 +419,7 @@ export default function DashboardPage() {
                   ))}
                 </div>
               )}
-            </MotionDiv>
+            </div>
           </>
         )}
       </MotionDiv>

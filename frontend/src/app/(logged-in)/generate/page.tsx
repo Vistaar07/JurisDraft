@@ -120,12 +120,26 @@ export default function GeneratePage() {
 
       // Create a pseudo id (could be replaced by backend id later)
       const id = `${data.document_type}-${Date.now()}`;
+
       // Persist in localStorage for edit page retrieval
       if (typeof window !== "undefined") {
         localStorage.setItem(
           `jurisdraft_document_${id}`,
           JSON.stringify({ id, ...data })
         );
+
+        // Add to saved documents list for dashboard
+        const savedDocIds = JSON.parse(
+          localStorage.getItem("jurisdraft_saved_documents") || "[]"
+        );
+
+        if (!savedDocIds.includes(id)) {
+          savedDocIds.push(id);
+          localStorage.setItem(
+            "jurisdraft_saved_documents",
+            JSON.stringify(savedDocIds)
+          );
+        }
       }
 
       router.push(`/documents/${id}/edit`);

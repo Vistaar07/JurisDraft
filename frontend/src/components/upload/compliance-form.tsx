@@ -232,11 +232,11 @@ export default function ComplianceForm() {
 
       // Update saved compliance list
       const savedComplianceIds = JSON.parse(
-        localStorage.getItem("jurisdraft_saved_compliance") || "[]"
+        localStorage.getItem("jurisdraft_saved_compliance_dashboard") || "[]"
       );
       savedComplianceIds.push(complianceId);
       localStorage.setItem(
-        "jurisdraft_saved_compliance",
+        "jurisdraft_saved_compliance_dashboard",
         JSON.stringify(savedComplianceIds)
       );
 
