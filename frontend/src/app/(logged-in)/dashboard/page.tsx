@@ -247,7 +247,7 @@ export default function DashboardPage() {
                   {complianceReports.map((report) => (
                     <Card
                       key={report.id}
-                      className="p-6 bg-white hover:shadow-lg transition-shadow duration-200"
+                      className="p-6 bg-white hover:shadow-lg transition-shadow duration-200 flex flex-col h-full"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <Shield className="h-6 w-6 text-rose-600" />
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                           .toUpperCase() || "Compliance Report"}
                       </h3>
 
-                      <div className="space-y-2 mb-4">
+                      <div className="space-y-2 mb-4 grow">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-600">Risk Score:</span>
                           <span className="font-semibold text-gray-900">
@@ -285,7 +285,7 @@ export default function DashboardPage() {
                         {new Date(report.created_at).toLocaleDateString()}
                       </p>
 
-                      <div className="flex items-center gap-2 pt-4 border-t">
+                      <div className="flex items-center gap-2 pt-4 border-t mt-auto">
                         <Button
                           size="sm"
                           onClick={() =>
@@ -300,7 +300,7 @@ export default function DashboardPage() {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDeleteCompliance(report.id)}
-                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                          className="bg-rose-600 text-white hover:bg-white hover:text-rose-600 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -341,7 +341,7 @@ export default function DashboardPage() {
                   {documents.map((doc) => (
                     <Card
                       key={doc.id}
-                      className="p-6 bg-white hover:shadow-lg transition-shadow duration-200"
+                      className="p-6 bg-white hover:shadow-lg transition-shadow duration-200 flex flex-col h-full"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <FileText className="h-6 w-6 text-rose-600" />
@@ -359,7 +359,7 @@ export default function DashboardPage() {
                           "Untitled Document"}
                       </h3>
 
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-3 grow">
                         {truncateText(doc.document_text, 120)}
                       </p>
 
@@ -376,13 +376,13 @@ export default function DashboardPage() {
                           )}
                       </div>
 
-                      <div className="flex items-center gap-2 pt-4 border-t">
+                      <div className="flex items-center gap-2 pt-4 border-t mt-auto">
                         <Button
                           size="sm"
                           onClick={() =>
                             router.push(`/documents/${doc.id}/edit`)
                           }
-                          className="flex-1 bg-rose-50 text-rose-700 hover:bg-rose-100"
+                          className="flex-1 bg-rose-600 hover:bg-rose-700 text-white"
                         >
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
@@ -391,7 +391,7 @@ export default function DashboardPage() {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDelete(doc.id)}
-                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                          className="bg-rose-600 text-white hover:bg-white hover:text-rose-600 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

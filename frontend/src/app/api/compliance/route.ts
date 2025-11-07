@@ -168,7 +168,8 @@ export async function GET() {
         cr.id, 
         cr.document_type, 
         cr.overall_risk_score, 
-        cr.risk_level, 
+        cr.risk_level,
+        cr.summary,
         cr.created_at,
         d.title AS document_title
       FROM compliance_reports cr

@@ -82,7 +82,9 @@ export async function GET() {
     const userDbId = await getUserDbId(clerkUserId);
 
     const documents = await sql`
-      SELECT id, title, document_type, status, created_at, updated_at
+      SELECT id, title, document_type, document_text, status, 
+             checklist_items_included, governing_acts, metadata, 
+             created_at, updated_at
       FROM documents
       WHERE user_id = ${userDbId}
         AND deleted_at IS NULL
