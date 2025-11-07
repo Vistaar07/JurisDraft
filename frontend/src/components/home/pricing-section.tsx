@@ -2,9 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { containerVariants, itemsVariants } from "@/utils/constants";
-import { ArrowRight, CheckIcon } from "lucide-react";
+import { ArrowRight, CheckIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { MotionDiv, MotionSection } from "../common/motion-wrapper";
+import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type PriceType = {
   name: string;
@@ -12,7 +16,9 @@ type PriceType = {
   description: string;
   features: string[];
   isMostPopular: boolean;
-  paymentLink: string;
+  paymentLink?: string;
+  priceId?: string;
+  isStripePlan?: boolean;
 };
 
 const listVariant = {
@@ -32,7 +38,57 @@ const PricingCard = ({
   features,
   isMostPopular,
   paymentLink,
+  priceId,
+  isStripePlan,
 }: PriceType) => {
+  const [loading, setLoading] = useState(false);
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  const handleSubscribe = async () => {
+    // If not a Stripe plan, just navigate to the link
+    if (!isStripePlan || !priceId) {
+      router.push(paymentLink || "/sign-up");
+      return;
+    }
+
+    // Check if user is signed in
+    if (!isSignedIn) {
+      toast.error("Please sign in to subscribe");
+      router.push("/sign-in");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          priceId,
+          planName: name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+
+      // Redirect to Stripe checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to start checkout. Please try again.");
+      setLoading(false);
+    }
+  };
+
   return (
     <MotionDiv
       variants={listVariant}
@@ -84,17 +140,41 @@ const PricingCard = ({
           variants={listVariant}
           className="space-y-2 flex justify-center w-full"
         >
-          <Link
-            href={paymentLink}
-            className={cn(
-              "w-full rounded-full flex items-center justify-center gap-2 bg-linear-to-r text-white border-2 py-3 font-semibold transition-all duration-300",
-              isMostPopular
-                ? "from-rose-800 to-rose-500 hover:from-rose-500 hover:to-rose-800 border-rose-900"
-                : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100"
-            )}
-          >
-            Get Started <ArrowRight size={18} />
-          </Link>
+          {isStripePlan ? (
+            <button
+              onClick={handleSubscribe}
+              disabled={loading}
+              className={cn(
+                "w-full rounded-full flex items-center justify-center gap-2 bg-linear-to-r text-white border-2 py-3 font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+                isMostPopular
+                  ? "from-rose-800 to-rose-500 hover:from-rose-500 hover:to-rose-800 border-rose-900"
+                  : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100"
+              )}
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  Get Started <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          ) : (
+            <Link
+              href={paymentLink || "/sign-up"}
+              className={cn(
+                "w-full rounded-full flex items-center justify-center gap-2 bg-linear-to-r text-white border-2 py-3 font-semibold transition-all duration-300",
+                isMostPopular
+                  ? "from-rose-800 to-rose-500 hover:from-rose-500 hover:to-rose-800 border-rose-900"
+                  : "from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 border-rose-100"
+              )}
+            >
+              Get Started <ArrowRight size={18} />
+            </Link>
+          )}
         </MotionDiv>
       </div>
     </MotionDiv>
@@ -114,7 +194,9 @@ export default function PricingSection() {
         "Email support",
       ],
       isMostPopular: false,
-      paymentLink: "/sign-up",
+      priceId: "price_1Rarb4ImsQm3JXX3zEHehEYa",
+      paymentLink: "https://buy.stripe.com/test_14AdR9eTHd0Vgq85a84ko00",
+      isStripePlan: true,
     },
     {
       name: "Pro",
@@ -128,7 +210,9 @@ export default function PricingSection() {
         "Priority support",
       ],
       isMostPopular: true,
-      paymentLink: "/sign-up",
+      priceId: "price_1RarcxImsQm3JXX3vD9FhKol",
+      paymentLink: "https://buy.stripe.com/test_9B69AT5j74up0ra0TS4ko01",
+      isStripePlan: true,
     },
     {
       name: "Enterprise",
@@ -143,6 +227,7 @@ export default function PricingSection() {
       ],
       isMostPopular: false,
       paymentLink: "/contact",
+      isStripePlan: false,
     },
   ];
 

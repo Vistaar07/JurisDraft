@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/common/navbar";
 import Footer from "@/components/common/footer";
 import FadeContent from "@/components/bits/FadeContent";
+import { Toaster } from "sonner";
 
 const fontSans = FontSans({
   variable: "--font-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <Toaster position="top-center" richColors />
         </body>
       </html>
     </ClerkProvider>

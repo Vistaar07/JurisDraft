@@ -32,7 +32,9 @@ export default function Navbar() {
         <SignedIn>
           <div className="flex gap-2 items-center">
             <NavLink href="/upload">Upload Document</NavLink>
-            <PlanBadge />
+            <div suppressHydrationWarning>
+              <PlanBadge />
+            </div>
             <UserButton />
           </div>
         </SignedIn>
