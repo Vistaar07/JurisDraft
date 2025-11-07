@@ -1,0 +1,165 @@
+-- Create ENUM types for subscription plans and statuses
+CREATE TYPE subscription_plan AS ENUM ('free', 'basic', 'pro');
+CREATE TYPE subscription_status AS ENUM ('active', 'inactive', 'trial');
+
+-- 1. Users Table
+-- This table will store user information from Clerk and your app
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    clerk_id VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    username VARCHAR(255),
+    image_url TEXT,
+    subscription_plan subscription_plan DEFAULT 'free',
+    subscription_status subscription_status DEFAULT 'trial',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Helper Function to automatically update 'updated_at' columns
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Apply the trigger to the 'users' table
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION trigger_set_timestamp();
+
+-- Create ENUM type for document status
+CREATE TYPE document_status AS ENUM ('draft', 'final', 'archived');
+
+-- 2. Documents Table
+-- This table stores the generated document content and metadata
+CREATE TABLE documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    document_type VARCHAR(100) NOT NULL,
+    document_text TEXT NOT NULL,
+    title VARCHAR(255),
+    status document_status DEFAULT 'draft',
+    checklist_items_included INTEGER,
+    governing_acts JSONB,
+    metadata JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ -- Nullable, for soft deletes
+);
+
+-- Indexes for efficient querying
+CREATE INDEX idx_documents_user_id ON documents(user_id);
+CREATE INDEX idx_documents_document_type ON documents(document_type);
+CREATE INDEX idx_documents_created_at ON documents(created_at);
+
+-- Apply the trigger to the 'documents' table
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON documents
+FOR EACH ROW
+EXECUTE FUNCTION trigger_set_timestamp();
+
+-- Create ENUM type for risk level (used in multiple tables)
+CREATE TYPE risk_level AS ENUM ('low', 'medium', 'high');
+
+-- 3. Compliance Reports Table
+-- This table stores the high-level summary of a compliance analysis
+CREATE TABLE compliance_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    document_id UUID REFERENCES documents(id) ON DELETE SET NULL, -- Nullable
+    document_type VARCHAR(100) NOT NULL,
+    overall_risk_score DECIMAL(5, 2), -- e.g., 9.75
+    risk_level risk_level,
+    summary TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ -- Nullable, for soft deletes
+);
+
+-- Indexes for efficient querying
+CREATE INDEX idx_compliance_reports_user_id ON compliance_reports(user_id);
+CREATE INDEX idx_compliance_reports_document_id ON compliance_reports(document_id);
+CREATE INDEX idx_compliance_reports_risk_level ON compliance_reports(risk_level);
+
+-- Apply the trigger to the 'compliance_reports' table
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON compliance_reports
+FOR EACH ROW
+EXECUTE FUNCTION trigger_set_timestamp();
+
+-- Create ENUM type for compliance check status
+CREATE TYPE compliance_status AS ENUM ('compliant', 'non_compliant', 'partially_compliant');
+
+-- 4. Compliance Checks Table
+-- This table stores the detailed, item-by-item checks for a report
+CREATE TABLE compliance_checks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    compliance_report_id UUID NOT NULL REFERENCES compliance_reports(id) ON DELETE CASCADE,
+    requirement VARCHAR(255) NOT NULL,
+    status compliance_status,
+    details TEXT,
+    relevant_acts JSONB, -- Storing as JSONB is best for arrays/JSON
+    remediation TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for efficient querying
+CREATE INDEX idx_compliance_checks_report_id ON compliance_checks(compliance_report_id);
+CREATE INDEX idx_compliance_checks_status ON compliance_checks(status);
+
+-- Apply the trigger to the 'compliance_checks' table
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON compliance_checks
+FOR EACH ROW
+EXECUTE FUNCTION trigger_set_timestamp();
+
+-- 5. Loopholes Table
+-- This table stores specific loopholes identified in a report
+CREATE TABLE loopholes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    compliance_report_id UUID NOT NULL REFERENCES compliance_reports(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    risk_level risk_level, -- Uses the ENUM created in Step 5
+    clause_reference VARCHAR(255),
+    recommendation TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for efficient querying
+CREATE INDEX idx_loopholes_report_id ON loopholes(compliance_report_id);
+CREATE INDEX idx_loopholes_risk_level ON loopholes(risk_level);
+
+-- Apply the trigger to the 'loopholes' table
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON loopholes
+FOR EACH ROW
+EXECUTE FUNCTION trigger_set_timestamp();
+
+-- 6. Recommendations Table
+-- This table stores actionable recommendations for a report
+CREATE TABLE recommendations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    compliance_report_id UUID NOT NULL REFERENCES compliance_reports(id) ON DELETE CASCADE,
+    recommendation_text TEXT NOT NULL,
+    priority INTEGER, -- For sorting by importance
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index for efficient querying
+CREATE INDEX idx_recommendations_report_id ON recommendations(compliance_report_id);
+
+-- Apply the trigger to the 'recommendations' table
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON recommendations
+FOR EACH ROW
+EXECUTE FUNCTION trigger_set_timestamp();
