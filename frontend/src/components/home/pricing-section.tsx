@@ -119,7 +119,7 @@ export default function PricingSection() {
     {
       name: "Pro",
       description: "For professionals & small teams",
-      price: 29,
+      price: 19,
       features: [
         "50 document generations/month",
         "Advanced RAG model",
