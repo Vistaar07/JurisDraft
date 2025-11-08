@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
 import { containerVariants, itemsVariants } from "@/utils/constants";
+import ProtectedFeature from "@/components/common/protected-feature";
 import {
   PromptInput,
   PromptInputTextarea,
@@ -25,7 +26,7 @@ import {
   Suggestion,
 } from "@/components/ui/shadcn-io/ai/suggestion";
 import { Response } from "@/components/ui/shadcn-io/ai/response";
-import { Scale, Sparkles, Bot } from "lucide-react";
+import { Scale, Sparkles, Bot, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface ChatMessage {
@@ -43,6 +44,18 @@ const SAMPLE_QUESTIONS = [
 ];
 
 export default function LegalChatPage() {
+  return (
+    <ProtectedFeature
+      featureName="Legal Chat"
+      featureDescription="You need an active plan to access the Legal Chat feature of JurisDraft. Chat with an AI legal assistant specializing in Indian law. Get instant answers to your questions about legal documents, contracts, acts, and compliance requirements."
+      icon={<MessageSquare className="w-16 h-16" />}
+    >
+      <LegalChatContent />
+    </ProtectedFeature>
+  );
+}
+
+function LegalChatContent() {
   const { user } = useUser();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState("");

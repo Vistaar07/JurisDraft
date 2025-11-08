@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
+import ProtectedFeature from "@/components/common/protected-feature";
 import {
   FileText,
   Edit,
@@ -48,6 +49,18 @@ type ComplianceReport = {
 };
 
 export default function DashboardPage() {
+  return (
+    <ProtectedFeature
+      featureName="Dashboard"
+      featureDescription="You need an active plan to access the Dashboard feature of JurisDraft. View and manage all your generated documents and compliance reports in one centralized location. Track your legal work history and access all your saved documents."
+      icon={<FolderOpen className="w-16 h-16" />}
+    >
+      <DashboardContent />
+    </ProtectedFeature>
+  );
+}
+
+function DashboardContent() {
   const router = useRouter();
   const [documents, setDocuments] = useState<StoredDoc[]>([]);
   const [complianceReports, setComplianceReports] = useState<

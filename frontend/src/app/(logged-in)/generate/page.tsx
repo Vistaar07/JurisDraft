@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
+import ProtectedFeature from "@/components/common/protected-feature";
 import {
   PromptInput,
   PromptInputTextarea,
@@ -89,6 +90,18 @@ function promptToStructuredJSON(prompt: string) {
 }
 
 export default function GeneratePage() {
+  return (
+    <ProtectedFeature
+      featureName="Document Generation"
+      featureDescription="You need an active plan to access the Document Generation feature of JurisDraft. Create AI-powered legal documents tailored to Indian law. Simply describe your requirements and get professionally drafted documents including NDAs, contracts, agreements, and more."
+      icon={<Sparkles className="w-16 h-16" />}
+    >
+      <GenerateContent />
+    </ProtectedFeature>
+  );
+}
+
+function GenerateContent() {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "submitted" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
